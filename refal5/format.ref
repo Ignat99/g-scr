@@ -1,0 +1,7 @@
+#!~/.local/share/refal-5-lambda/bin/rfc
+
+* Format: (IdentificatorIcon TypeIcon (TextFormula) (Steps))
+
+(1 'ACTION' ('Q=T_n, K=T_m') (0 2))
+(2 'QUESTION' ('IsBoundary') (1 3) (-1 4))
+(3 'ACTION' ('SplitBasis') (0 5))

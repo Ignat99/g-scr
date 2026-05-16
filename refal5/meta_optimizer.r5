@@ -1,0 +1,22 @@
+
+* Refal-5 function optimization Drakon-graf
+$ENTRY Go {
+    = <P1 <Card>>;
+}
+
+* Search icon type QUESTION, for check border of media
+OptimizeDrakon {
+    e.1 (s.Id 'QUESTION' ('IsBondary') (1 s.Next1) (-1 s.Next2)) e.2
+    = e.1 <ApplyNicomachus s.Id s.Next1 s.Next2> <OptimizeDrakon e.2>;
+
+    * If no matches, go to next part of graf
+    e.1 (s.Id s.Type (e.Text) (e.Edges)) e.2
+    = (s.Id s.Type (e.Text) (e.Edges)) <OptimizeDrakon e.2>;
+
+    =;
+}
+
+* Function Refal, changed hevi condiciones to ternary shift of Setun
+ApplyNicomachus {
+    s.Id s.Next1 s.Next2 = (s.Id 'SETUN_SWITCH' ('TernaryShift') (1 s.Next1) (-1 s.Next2));
+}
