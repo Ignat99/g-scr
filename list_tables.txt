@@ -1,0 +1,17 @@
+pip_system_certs: ERROR: could not inject truststore: Invalid version: '0.dev0'
+=== Список таблиц в файле .drn ===
+Таблица: info
+Таблица: diagrams
+Таблица: state
+Таблица: items
+Таблица: diagram_info
+Таблица: tree_nodes
+
+=== Структура ключевых таблиц ===
+
+Схема таблицы 'diagrams':
+  Поле: diagram_id (integer)
+  Поле: name (text)
+  Поле: origin (text)
+  Поле: description (text)
+  Поле: zoom (double)
