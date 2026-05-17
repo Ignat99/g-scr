@@ -1,4 +1,4 @@
 #!/bin/bash
 
-diff 2.sql rmsnorm.sql > sql.diff
+diff rmsnorm5.sql rmsnorm6.sql > sql.diff
 
