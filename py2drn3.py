@@ -3,7 +3,7 @@ import sqlite3
 import os
 
 class FinalDrakonConverter:
-    def __init__(self, drn_path="microgpt.drn"):
+    def __init__(self, drn_path="rmsnorm.drn"):
         self.drn_path = drn_path
         if os.path.exists(self.drn_path):
             os.remove(self.drn_path)
@@ -142,6 +142,6 @@ class FinalDrakonConverter:
 
 if __name__ == "__main__":
     # Запуск обработки исходного файла
-    converter = FinalDrakonConverter("microgpt.drn")
-    converter.convert("microgpt.py")
+    converter = FinalDrakonConverter("rmsnorm.drn")
+    converter.convert("rmsnorm.py")
   
