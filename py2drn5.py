@@ -2,7 +2,7 @@ import ast
 import sqlite3
 import os
 
-class DrakonTimelineConverterV5:
+class DrakonLineConnectorConverterV5:
     def __init__(self, drn_path="rmsnorm.drn"):
         self.drn_path = drn_path
         if os.path.exists(self.drn_path):
@@ -13,7 +13,7 @@ class DrakonTimelineConverterV5:
         self._build_exact_schema()
 
     def _build_exact_schema(self):
-        """Создание оригинальной структуры таблиц согласно дампу 2.sql"""
+        """Создание оригинальной структуры таблиц согласно спецификации drakon_qt"""
         self.cursor.execute("CREATE TABLE tree_nodes (node_id integer primary key, parent integer, type text, name text, diagram_id integer);")
         self.cursor.execute("CREATE TABLE state (row integer primary key, current_dia integer, description text);")
         self.cursor.execute("""
@@ -45,8 +45,8 @@ class DrakonTimelineConverterV5:
         self.cursor.execute("CREATE TABLE diagram_info (diagram_id integer, name text, value text, primary key (diagram_id, name));")
         self.conn.commit()
 
-    def convert_with_timeline(self, py_source_path="rmsnorm.py"):
-        """Трансляция с сохранением сквозного шампура времени"""
+    def convert_with_lines(self, py_source_path="rmsnorm.py"):
+        """Трансляция rmsnorm.py с явным добавлением графических линий связи"""
         with open(py_source_path, "r", encoding="utf-8") as f:
             source_code = f.read()
 
@@ -59,53 +59,61 @@ class DrakonTimelineConverterV5:
             if isinstance(node, ast.FunctionDef) and node.name == "rmsnorm":
                 func_name = node.name
                 
-                # Системная регистрация в дереве drakon_qt
+                # Метаданные дерева проекта
                 self.cursor.execute("INSERT INTO tree_nodes VALUES (?, 0, 'item', NULL, ?);", (diagram_id, diagram_id))
                 self.cursor.execute("INSERT INTO state VALUES (?, ?, NULL);", (diagram_id, diagram_id))
                 self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 120.0);", (diagram_id, func_name))
                 self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (diagram_id,))
                 self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (diagram_id,))
 
-                # Главная вертикальная ось времени (шампур)
+                # Координата центральной вертикальной оси алгоритма
                 center_x = 510
 
-                # Разделяем логику: вычисления отдельно, финальный return — в терминальный узел
-                action_lines = []
-                return_text = "Конец"
-
-                for stmt in node.body:
-                    if isinstance(stmt, ast.Return):
-                        return_text = ast.unparse(stmt).strip()
-                    else:
-                        action_lines.append(ast.unparse(stmt).strip())
-
-                pure_computation_text = "\n".join(action_lines)
-
-                # 1. Икона «Начало» (y=420) — дает старт шампуру
+                # Икона 1: Начало (тип: 'beginend', y=420)
                 self.cursor.execute("""
                     INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, 420, 50, 20, 60, 0, NULL, '', NULL, '');
                 """, (item_id, diagram_id, func_name, center_x))
                 item_id += 1
 
-                # 2. Икона «Процесс» (y=550) — шампур проходит сквозь вычисления
+                # Икона 2: Конец (тип: 'beginend', y=750, текст: 'Конец')
                 self.cursor.execute("""
-                    INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, 550, 170, 40, 0, 0, NULL, '', NULL, '');
-                """, (item_id, diagram_id, pure_computation_text, center_x))
+                    INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', 0, ?, 750, 50, 20, 60, 0, NULL, '', NULL, '');
+                """, (item_id, diagram_id, center_x))
                 item_id += 1
 
-                # 3. Икона «Конец» (y=710) — принимает return и замыкает шампур времени
+                # Извлекаем полный текст тела функции без изменения логики
+                body_lines = [ast.unparse(stmt).strip() for stmt in node.body]
+                function_body_text = "\n".join(body_lines)
+
+                # Икона 3: Процесс (тип: 'action', y=550)
                 self.cursor.execute("""
-                    INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, 710, 50, 20, 60, 0, NULL, '', NULL, '');
-                """, (item_id, diagram_id, return_text, center_x))
-                
+                    INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, 550, 170, 40, 0, 0, NULL, '', NULL, '');
+                """, (item_id, diagram_id, function_body_text, center_x))
                 item_id += 1
+
+                # --- ДОБАВЛЕНИЕ ЛИНИЙ (ШАМПУРА) ---
+                # В drakon_qt примитив линии часто задается типом 'vertical' или 'line' 
+                # с указанием стартовой точки (x, y) и смещения или конечной точки.
+                
+                # Линия 1: от Начала (y=420) до Процесса (y=550)
+                self.cursor.execute("""
+                    INSERT INTO items VALUES (?, ?, 'vertical', '', 0, ?, 420, 0, 0, 0, 0, NULL, '', NULL, '');
+                """, (item_id, diagram_id, center_x))
+                item_id += 1
+
+                # Линия 2: от Процесса (y=550) до Конца (y=750)
+                self.cursor.execute("""
+                    INSERT INTO items VALUES (?, ?, 'vertical', '', 0, ?, 550, 0, 0, 0, 0, NULL, '', NULL, '');
+                """, (item_id, diagram_id, center_x))
+                item_id += 1
+
                 diagram_id += 1
 
         self.conn.commit()
         self.conn.close()
-        print(f"[Успех] Ось времени восстановлена. Скрипт py2drn5.py сформировал непрерывный шампур.")
+        print(f"[Выполнение] Скрипт py2drn5.py успешно сгенерировал файл {self.drn_path}")
 
 if __name__ == "__main__":
-    converter = DrakonTimelineConverterV5("rmsnorm.drn")
-    converter.convert_with_timeline("rmsnorm.py")
-  
+    converter = DrakonLineConnectorConverterV5("rmsnorm.drn")
+    converter.convert_with_lines("rmsnorm.py")
+    
