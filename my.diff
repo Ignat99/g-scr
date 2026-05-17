@@ -1,0 +1,34 @@
+39,42d38
+< #        if isinstance(other, Value):
+< #            other = other
+< #        else:
+< #            other = Value(other)
+46,48d41
+< 
+< 
+< 
+50,53d42
+< #        if isinstance(other, Value):
+< #            other = other
+< #        else:
+< #            other = Value(other)
+57,58d45
+< 
+<     def __neg__(self): return self * -1
+60d46
+<     def exp(self): return Value(math.exp(self.data), (self,), (math.exp(self.data),))
+61a48
+>     def exp(self): return Value(math.exp(self.data), (self,), (math.exp(self.data),))
+62a50
+>     def __neg__(self): return self * -1
+64,66d51
+<     def __rmul__(self, other): pass
+<     def __rsub__(self, other): return other + (-self)
+<     def __rtruediv__(self, other): return other * self**-1
+67a53,54
+>     def __rsub__(self, other): return other + (-self)
+>     def __rmul__(self, other): return self * other
+69c56
+< 
+---
+>     def __rtruediv__(self, other): return other * self**-1
