@@ -1,0 +1,48 @@
+ DRAKON 1.33 nodes {{{8 string_comparer {25 57} {The comparer to use in the sorting demo.} 100.0 {{122 beginend string_comparer {} {} 0 170 120 70 20 60 0} {123 beginend End {} {} 0 170 440 50 20 60 0} {124 vertical {} {} {} 0 170 120 0 310 0 0} {125 action {left
+right} {} {} 0 320 120 50 30 0 0} {126 horizontal {} {} {} 0 230 120 60 0 0 0} {127 if {left < right} {} {} 0 170 210 70 20 200 0} {128 action {return -1} {} {} 0 440 360 50 20 0 0} {129 action {return 0} {} {} 0 170 360 70 20 0 0} {130 action {return 1} {} {} 0 310 360 50 20 0 0} {131 if {left > right} {} {} 0 170 290 70 20 70 0} {132 horizontal {} {} {} 0 170 400 270 0 0 0} {133 vertical {} {} {} 0 440 210 0 190 0 0} {134 vertical {} {} {} 0 310 290 0 110 0 0}} {}} {9 quick_sort_demo {-160 2} {A demo that creates a few arrays of strings and sorts them.} 100.0 {{135 beginend quick_sort_demo {} {} 0 170 30 70 20 60 0} {136 beginend End {} {} 0 170 760 50 20 60 0} {137 vertical {} {} {} 0 170 30 0 730 0 0} {138 action {unsorted = [ "the", "sooner", "we", "start", "this", "the", "better" ]
+sorted = [ "aa", "bb", "cc", "dd", "ee", "ff" ]
+reverse = [ "ff", "ee", "dd", "cc", "bb", "aa" ]
+empty = []
+flat = [ "flat", "flat", "flat", "flat", "flat" ]} {} {} 1 170 190 290 50 0 0} {139 action {sorter = Sorter(string_comparer)
+unsorted2 = sorter.quick_sort(unsorted)
+sorted2 = sorter.quick_sort(sorted)
+reverse2 = sorter.quick_sort(reverse)
+empty2 = sorter.quick_sort(empty)
+flat2 = sorter.quick_sort(flat)} {} {} 0 170 330 290 60 0 0} {140 action {print(str(unsorted2))
+print(str(sorted2))
+print(str(reverse2))
+print(str(empty2))
+print(str(flat2))} {} {} 0 170 470 290 50 0 0} {141 action {strings_are_sorted(unsorted2)
+strings_are_sorted(sorted2)
+strings_are_sorted(reverse2)
+strings_are_sorted(empty2)
+strings_are_sorted(flat2)} {} {} 0 170 610 290 50 0 0} {142 action print(\"\") {} {} 0 170 700 290 20 0 0} {143 action {print("quick sort demo")} {} {} 0 170 100 290 20 0 0}} {}} {10 strings_are_sorted {-225 -100} {Tests whether an array of strings is actually sorted.} 100.0 {{144 beginend strings_are_sorted {} {} 0 170 20 90 20 60 0} {145 beginend End {} {} 0 170 750 50 20 60 0} {146 vertical {} {} {} 0 170 40 0 700 0 0} {147 action array {} {} 0 350 20 50 20 0 0} {148 horizontal {} {} {} 0 230 20 80 0 0 0} {149 loopstart {foreach i; range(0, length)} {} {} 0 170 140 150 20 60 0} {150 loopend {} {} {} 0 170 660 150 20 60 0} {151 action {current = array[i]} {} {} 0 170 200 150 20 0 0} {152 loopstart {j = i + 1; j < length; j += 1} {} {} 0 170 260 150 20 60 0} {153 loopend {} {} {} 0 170 600 150 20 60 0} {154 action {after = array[j]} {} {} 0 170 320 150 20 0 0} {155 action {raise Exception( "Collection is not sorted:\n" + str(array))} {} {} 0 810 600 250 20 0 0} {156 vertical {} {} {} 0 810 410 0 290 0 0} {157 horizontal {} {} {} 0 170 700 640 0 0 0} {158 action {length = len(array)} {} {} 0 170 70 150 20 0 0} {159 select {string_comparer(current, after)} {} {} 0 170 380 150 20 60 0} {160 case -1 {} {} 0 170 450 150 20 60 0} {161 case 0 {} {} 0 440 450 100 20 0 0} {162 case 1 {} {} 0 810 450 250 20 0 0} {163 horizontal {} {} {} 0 170 410 640 0 0 0} {164 vertical {} {} {} 0 440 410 0 150 0 0} {165 horizontal {} {} {} 0 170 560 270 0 0 0} {166 commentin {'current' is less
+than 'after'} {} {} 0 170 510 150 30 60 0} {167 commentin {'current' is equal
+to 'after'} {} {} 0 440 510 100 30 0 0} {168 commentin {'current' is greater
+than 'after'} {} {} 0 810 510 250 30 0 0}} {}} {11 quick_sort {-40 14} {The classic quick sort algorithm.
+
+Implemented as a method in a class.
+The comparison function is stored
+in the field 'comparer'.} 100.0 {{169 beginend quick_sort {} {} 0 110 60 50 20 0 0} {170 beginend End {} {} 0 2220 510 50 20 0 0} {171 vertical {} {} {} 0 110 80 0 710 0 0} {172 vertical {} {} {} 0 780 120 0 670 0 0} {173 vertical {} {} {} 0 2220 120 0 380 0 0} {174 horizontal {} {} {} 0 110 120 2110 0 0 0} {175 arrow {} {} {} 0 -20 120 130 670 1930 1} {176 branch {analyze input} {} {} 0 110 170 110 30 0 0} {177 address exit {} {} 0 110 750 110 30 0 0} {178 branch {simple case} {} {} 0 780 170 150 30 0 0} {179 branch partition {} {} 0 1450 170 160 30 0 0} {180 address exit {} {} 0 780 750 150 30 0 0} {181 horizontal {} {} {} 0 150 60 120 0 0 0} {182 action {#method
+
+self
+collection} {} {} 0 310 60 50 50 0 0} {183 action {length = len(collection)} {} {} 0 110 270 110 20 0 0} {184 select length {} {} 0 110 380 110 20 0 0} {185 case 0 {} {} 0 110 460 110 20 0 0} {186 case 1 {} {} 0 280 460 50 20 60 0} {187 case 2 {} {} 0 400 460 60 20 0 0} {188 branch exit {} {} 0 2220 170 70 30 0 0} {189 horizontal {} {} {} 0 110 420 410 0 0 0} {190 case {} {} {} 0 520 460 50 20 60 0} {191 vertical {} {} {} 0 280 420 0 80 0 0} {192 vertical {} {} {} 0 520 420 0 370 0 0} {193 vertical {} {} {} 0 400 420 0 370 0 0} {194 horizontal {} {} {} 0 110 500 170 0 0 0} {195 action {result = collection} {} {} 0 110 610 110 20 0 0} {196 address {simple case} {} {} 0 400 750 60 30 0 0} {197 vertical {} {} {} 0 1450 120 0 670 0 0} {198 address recurse {} {} 0 1450 750 160 30 0 0} {199 address partition {} {} 0 520 750 50 30 60 0} {200 action {first = collection[0]
+second = collection[1]} {} {} 0 780 290 150 30 0 0} {201 if {self.comparer(first, second) < 0} {} {} 0 780 360 150 20 140 1} {202 action {result = [ second, first ]} {} {} 0 1070 610 120 20 0 0} {203 vertical {} {} {} 0 1070 360 0 300 0 0} {204 horizontal {} {} {} 0 780 660 290 0 0 0} {205 action {half = int(length / 2)
+median = collection[half]
+left = []
+right = []} {} {} 0 1450 270 160 50 0 0} {206 loopstart {i = 0; i < length; i += 1} {} {} 0 1450 360 160 20 0 0} {207 loopend {} {} {} 0 1450 690 160 20 0 0} {208 action {current = collection[i]} {} {} 0 1450 480 160 20 0 0} {209 if {self.comparer(current, median) < 0} {} {} 0 1450 540 160 20 120 1} {210 action left.append(current) {} {} 0 1450 610 160 20 0 0} {211 action right.append(current) {} {} 0 1730 610 100 20 0 0} {212 horizontal {} {} {} 0 1450 650 390 0 0 0} {213 vertical {} {} {} 0 1730 540 0 110 0 0} {214 branch recurse {} {} 0 1910 170 160 30 0 0} {215 address exit {} {} 0 1910 750 160 30 0 0} {216 vertical {} {} {} 0 1910 120 0 670 0 0} {217 action {left_sorted = self.quick_sort(left)
+right_sorted = self.quick_sort(right)} {} {} 0 1910 250 160 30 0 0} {218 action {result = []
+result.extend(left_sorted)
+result.append(median)
+result.extend(right_sorted)} {} {} 0 1910 340 160 50 0 0} {219 if {i == half} {} {} 0 1450 410 160 20 230 0} {220 vertical {} {} {} 0 1840 410 0 240 0 0} {221 action {result = collection} {} {} 0 780 610 150 20 0 0} {222 action {return result} {} {} 0 2220 420 70 20 0 0}} {}} {12 __init__-2 {24 -13} {The constructor of class Sorter.} 100.0 {{223 beginend __init__ {} {} 0 170 60 50 20 60 0} {224 beginend End {} {} 0 170 390 50 20 60 0} {225 vertical {} {} {} 0 170 80 0 290 0 0} {226 horizontal {} {} {} 0 200 60 80 0 0 0} {227 action {#method
+self
+comparer} {} {} 0 310 60 50 40 0 0} {228 action {self.comparer = comparer} {} {} 0 170 170 110 20 0 0} {229 commentout {Note that the argument list starts with
+#comment
+This makes the current procedure 
+to be added as a method to the class.} {} {} 0 610 60 170 50 60 0} {230 commentin {In order to make the code generator create a class,
+add something like this to the File description:
+
+=== class ===
+class Sorter
+
+Only one class per file is supported.} {} {} 0 570 260 228 70 60 0}} {}}} {{15 0 folder {Quick sort} {}} {16 15 item {} 8} {17 15 item {} 9} {18 15 item {} 10} {19 15 folder {Sorter methods} {}} {20 19 item {} 11} {21 19 item {} 12}}}

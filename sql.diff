@@ -1,90 +1,250 @@
-3,4d2
-< INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (1,0,'item',NULL,1);
-< INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (2,0,'item',NULL,2);
-7a6,8
-> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (11,0,'item',NULL,1);
-> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (12,0,'item',NULL,2);
-> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (13,7,'item','',8);
-9c10
-< INSERT INTO `state` (row,current_dia,description) VALUES (1,7,'=== header ===
+3,5d2
+< INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (3,0,'folder','Quick sort',NULL);
+< INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (7,3,'folder','Sorter methods',NULL);
+< INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (9,7,'item','',7);
+8c5,12
+< INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (13,7,'item','',8);
 ---
-> INSERT INTO `state` (row,current_dia,description) VALUES (1,8,'=== header ===
-19c20
-<     foo = ""
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (14,0,'item',NULL,7);
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (15,0,'folder','Quick sort',NULL);
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (16,15,'item','',8);
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (17,15,'item','',9);
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (18,15,'item','',10);
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (19,15,'folder','Sorter methods',NULL);
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (20,19,'item','',11);
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (21,19,'item','',12);
+10c14
+< INSERT INTO `state` (row,current_dia,description) VALUES (1,8,'=== header ===
 ---
->     foo = ''''
-74a76,140
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (122,8,'beginend','quick_sort',0,110,60,50,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (123,8,'beginend','End',0,2220,510,50,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (124,8,'vertical','',0,110,80,0,710,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (125,8,'vertical','',0,780,120,0,670,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (126,8,'vertical','',0,2220,120,0,380,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (127,8,'horizontal','',0,110,120,2110,0,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (128,8,'arrow','',0,-20,120,130,670,1930,1,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (129,8,'branch','analyze input',0,110,170,110,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (130,8,'address','exit',0,110,750,110,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (131,8,'branch','simple case',0,780,170,150,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (132,8,'branch','partition',0,1450,170,160,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (133,8,'address','exit',0,780,750,150,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (134,8,'horizontal','',0,150,60,120,0,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (135,8,'action','#method
+> INSERT INTO `state` (row,current_dia,description) VALUES (1,'','=== header ===
+20c24
+<     foo = ''''
+---
+>     foo = ''''''''
+43,45c47
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (3,1,'action','ms = sum((xi * xi for xi in x)) / len(x)
+< scale = (ms + 1e-05) ** (-0.5)
+< return [xi * scale for xi in x]',0,500,550,170,40,0,0,NULL,'',NULL,'');
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (3,1,'action','return [xi * scale for xi in x]',0,500,550,170,40,0,0,NULL,'',NULL,'');
+61a64
 > 
+76,89c79,160
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (122,8,'beginend','quick_sort',0,110,60,50,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (123,8,'beginend','End',0,2220,510,50,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (124,8,'vertical','',0,110,80,0,710,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (125,8,'vertical','',0,780,120,0,670,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (126,8,'vertical','',0,2220,120,0,380,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (127,8,'horizontal','',0,110,120,2110,0,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (128,8,'arrow','',0,-20,120,130,670,1930,1,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (129,8,'branch','analyze input',0,110,170,110,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (130,8,'address','exit',0,110,750,110,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (131,8,'branch','simple case',0,780,170,150,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (132,8,'branch','partition',0,1450,170,160,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (133,8,'address','exit',0,780,750,150,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (134,8,'horizontal','',0,150,60,120,0,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (135,8,'action','#method
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (122,8,'beginend','string_comparer',0,170,120,70,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (123,8,'beginend','End',0,170,440,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (124,8,'vertical','',0,170,120,0,310,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (125,8,'action','left
+> right',0,320,120,50,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (126,8,'horizontal','',0,230,120,60,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (127,8,'if','left < right',0,170,210,70,20,200,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (128,8,'action','return -1',0,440,360,50,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (129,8,'action','return 0',0,170,360,70,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (130,8,'action','return 1',0,310,360,50,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (131,8,'if','left > right',0,170,290,70,20,70,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (132,8,'horizontal','',0,170,400,270,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (133,8,'vertical','',0,440,210,0,190,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (134,8,'vertical','',0,310,290,0,110,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (135,9,'beginend','quick_sort_demo',0,170,30,70,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (136,9,'beginend','End',0,170,760,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (137,9,'vertical','',0,170,30,0,730,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (138,9,'action','unsorted = [ "the", "sooner", "we", "start", "this", "the", "better" ]
+> sorted = [ "aa", "bb", "cc", "dd", "ee", "ff" ]
+> reverse = [ "ff", "ee", "dd", "cc", "bb", "aa" ]
+> empty = []
+> flat = [ "flat", "flat", "flat", "flat", "flat" ]',1,170,190,290,50,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (139,9,'action','sorter = Sorter(string_comparer)
+> unsorted2 = sorter.quick_sort(unsorted)
+> sorted2 = sorter.quick_sort(sorted)
+> reverse2 = sorter.quick_sort(reverse)
+> empty2 = sorter.quick_sort(empty)
+> flat2 = sorter.quick_sort(flat)',0,170,330,290,60,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (140,9,'action','print(str(unsorted2))
+> print(str(sorted2))
+> print(str(reverse2))
+> print(str(empty2))
+> print(str(flat2))',0,170,470,290,50,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (141,9,'action','strings_are_sorted(unsorted2)
+> strings_are_sorted(sorted2)
+> strings_are_sorted(reverse2)
+> strings_are_sorted(empty2)
+> strings_are_sorted(flat2)',0,170,610,290,50,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (142,9,'action','print("")',0,170,700,290,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (143,9,'action','print("quick sort demo")',0,170,100,290,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (144,10,'beginend','strings_are_sorted',0,170,20,90,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (145,10,'beginend','End',0,170,750,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (146,10,'vertical','',0,170,40,0,700,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (147,10,'action','array',0,350,20,50,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (148,10,'horizontal','',0,230,20,80,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (149,10,'loopstart','foreach i; range(0, length)',0,170,140,150,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (150,10,'loopend','',0,170,660,150,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (151,10,'action','current = array[i]',0,170,200,150,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (152,10,'loopstart','j = i + 1; j < length; j += 1',0,170,260,150,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (153,10,'loopend','',0,170,600,150,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (154,10,'action','after = array[j]',0,170,320,150,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (155,10,'action','raise Exception( "Collection is not sorted:\n" + str(array))',0,810,600,250,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (156,10,'vertical','',0,810,410,0,290,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (157,10,'horizontal','',0,170,700,640,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (158,10,'action','length = len(array)',0,170,70,150,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (159,10,'select','string_comparer(current, after)',0,170,380,150,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (160,10,'case','-1',0,170,450,150,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (161,10,'case','0',0,440,450,100,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (162,10,'case','1',0,810,450,250,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (163,10,'horizontal','',0,170,410,640,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (164,10,'vertical','',0,440,410,0,150,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (165,10,'horizontal','',0,170,560,270,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (166,10,'commentin','''current'' is less
+> than ''after''',0,170,510,150,30,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (167,10,'commentin','''current'' is equal
+> to ''after''',0,440,510,100,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (168,10,'commentin','''current'' is greater
+> than ''after''',0,810,510,250,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (169,11,'beginend','quick_sort',0,110,60,50,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (170,11,'beginend','End',0,2220,510,50,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (171,11,'vertical','',0,110,80,0,710,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (172,11,'vertical','',0,780,120,0,670,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (173,11,'vertical','',0,2220,120,0,380,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (174,11,'horizontal','',0,110,120,2110,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (175,11,'arrow','',0,-20,120,130,670,1930,1,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (176,11,'branch','analyze input',0,110,170,110,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (177,11,'address','exit',0,110,750,110,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (178,11,'branch','simple case',0,780,170,150,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (179,11,'branch','partition',0,1450,170,160,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (180,11,'address','exit',0,780,750,150,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (181,11,'horizontal','',0,150,60,120,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (182,11,'action','#method
+93,110c164,181
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (136,8,'action','length = len(collection)',0,110,270,110,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (137,8,'select','length',0,110,380,110,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (138,8,'case','0',0,110,460,110,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (139,8,'case','1',0,280,460,50,20,60,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (140,8,'case','2',0,400,460,60,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (141,8,'branch','exit',0,2220,170,70,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (142,8,'horizontal','',0,110,420,410,0,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (143,8,'case','',0,520,460,50,20,60,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (144,8,'vertical','',0,280,420,0,80,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (145,8,'vertical','',0,520,420,0,370,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (146,8,'vertical','',0,400,420,0,370,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (147,8,'horizontal','',0,110,500,170,0,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (148,8,'action','result = collection',0,110,610,110,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (149,8,'address','simple case',0,400,750,60,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (150,8,'vertical','',0,1450,120,0,670,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (151,8,'address','recurse',0,1450,750,160,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (152,8,'address','partition',0,520,750,50,30,60,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (153,8,'action','first = collection[0]
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (183,11,'action','length = len(collection)',0,110,270,110,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (184,11,'select','length',0,110,380,110,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (185,11,'case','0',0,110,460,110,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (186,11,'case','1',0,280,460,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (187,11,'case','2',0,400,460,60,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (188,11,'branch','exit',0,2220,170,70,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (189,11,'horizontal','',0,110,420,410,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (190,11,'case','',0,520,460,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (191,11,'vertical','',0,280,420,0,80,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (192,11,'vertical','',0,520,420,0,370,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (193,11,'vertical','',0,400,420,0,370,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (194,11,'horizontal','',0,110,500,170,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (195,11,'action','result = collection',0,110,610,110,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (196,11,'address','simple case',0,400,750,60,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (197,11,'vertical','',0,1450,120,0,670,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (198,11,'address','recurse',0,1450,750,160,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (199,11,'address','partition',0,520,750,50,30,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (200,11,'action','first = collection[0]
+112,116c183,187
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (154,8,'if','self.comparer(first, second) < 0',0,780,360,150,20,140,1,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (155,8,'action','result = [ second, first ]',0,1070,610,120,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (156,8,'vertical','',0,1070,360,0,300,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (157,8,'horizontal','',0,780,660,290,0,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (158,8,'action','half = int(length / 2)
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (201,11,'if','self.comparer(first, second) < 0',0,780,360,150,20,140,1,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (202,11,'action','result = [ second, first ]',0,1070,610,120,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (203,11,'vertical','',0,1070,360,0,300,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (204,11,'horizontal','',0,780,660,290,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (205,11,'action','half = int(length / 2)
+120,131c191,202
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (159,8,'loopstart','i = 0; i < length; i += 1',0,1450,360,160,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (160,8,'loopend','',0,1450,690,160,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (161,8,'action','current = collection[i]',0,1450,480,160,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (162,8,'if','self.comparer(current, median) < 0',0,1450,540,160,20,120,1,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (163,8,'action','left.append(current)',0,1450,610,160,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (164,8,'action','right.append(current)',0,1730,610,100,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (165,8,'horizontal','',0,1450,650,390,0,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (166,8,'vertical','',0,1730,540,0,110,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (167,8,'branch','recurse',0,1910,170,160,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (168,8,'address','exit',0,1910,750,160,30,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (169,8,'vertical','',0,1910,120,0,670,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (170,8,'action','left_sorted = self.quick_sort(left)
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (206,11,'loopstart','i = 0; i < length; i += 1',0,1450,360,160,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (207,11,'loopend','',0,1450,690,160,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (208,11,'action','current = collection[i]',0,1450,480,160,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (209,11,'if','self.comparer(current, median) < 0',0,1450,540,160,20,120,1,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (210,11,'action','left.append(current)',0,1450,610,160,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (211,11,'action','right.append(current)',0,1730,610,100,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (212,11,'horizontal','',0,1450,650,390,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (213,11,'vertical','',0,1730,540,0,110,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (214,11,'branch','recurse',0,1910,170,160,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (215,11,'address','exit',0,1910,750,160,30,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (216,11,'vertical','',0,1910,120,0,670,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (217,11,'action','left_sorted = self.quick_sort(left)
+133c204
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (171,8,'action','result = []
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (218,11,'action','result = []
+137,140c208,230
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (172,8,'if','i == half',0,1450,410,160,20,230,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (173,8,'vertical','',0,1840,410,0,240,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (174,8,'action','result = collection',0,780,610,150,20,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (175,8,'action','return result',0,2220,420,70,20,0,0,NULL,'',NULL,'');
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (219,11,'if','i == half',0,1450,410,160,20,230,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (220,11,'vertical','',0,1840,410,0,240,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (221,11,'action','result = collection',0,780,610,150,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (222,11,'action','return result',0,2220,420,70,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (223,12,'beginend','__init__',0,170,60,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (224,12,'beginend','End',0,170,390,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (225,12,'vertical','',0,170,80,0,290,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (226,12,'horizontal','',0,200,60,80,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (227,12,'action','#method
 > self
-> collection',0,310,60,50,50,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (136,8,'action','length = len(collection)',0,110,270,110,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (137,8,'select','length',0,110,380,110,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (138,8,'case','0',0,110,460,110,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (139,8,'case','1',0,280,460,50,20,60,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (140,8,'case','2',0,400,460,60,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (141,8,'branch','exit',0,2220,170,70,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (142,8,'horizontal','',0,110,420,410,0,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (143,8,'case','',0,520,460,50,20,60,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (144,8,'vertical','',0,280,420,0,80,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (145,8,'vertical','',0,520,420,0,370,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (146,8,'vertical','',0,400,420,0,370,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (147,8,'horizontal','',0,110,500,170,0,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (148,8,'action','result = collection',0,110,610,110,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (149,8,'address','simple case',0,400,750,60,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (150,8,'vertical','',0,1450,120,0,670,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (151,8,'address','recurse',0,1450,750,160,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (152,8,'address','partition',0,520,750,50,30,60,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (153,8,'action','first = collection[0]
-> second = collection[1]',0,780,290,150,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (154,8,'if','self.comparer(first, second) < 0',0,780,360,150,20,140,1,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (155,8,'action','result = [ second, first ]',0,1070,610,120,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (156,8,'vertical','',0,1070,360,0,300,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (157,8,'horizontal','',0,780,660,290,0,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (158,8,'action','half = int(length / 2)
-> median = collection[half]
-> left = []
-> right = []',0,1450,270,160,50,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (159,8,'loopstart','i = 0; i < length; i += 1',0,1450,360,160,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (160,8,'loopend','',0,1450,690,160,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (161,8,'action','current = collection[i]',0,1450,480,160,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (162,8,'if','self.comparer(current, median) < 0',0,1450,540,160,20,120,1,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (163,8,'action','left.append(current)',0,1450,610,160,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (164,8,'action','right.append(current)',0,1730,610,100,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (165,8,'horizontal','',0,1450,650,390,0,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (166,8,'vertical','',0,1730,540,0,110,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (167,8,'branch','recurse',0,1910,170,160,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (168,8,'address','exit',0,1910,750,160,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (169,8,'vertical','',0,1910,120,0,670,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (170,8,'action','left_sorted = self.quick_sort(left)
-> right_sorted = self.quick_sort(right)',0,1910,250,160,30,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (171,8,'action','result = []
-> result.extend(left_sorted)
-> result.append(median)
-> result.extend(right_sorted)',0,1910,340,160,50,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (172,8,'if','i == half',0,1450,410,160,20,230,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (173,8,'vertical','',0,1840,410,0,240,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (174,8,'action','result = collection',0,780,610,150,20,0,0,NULL,'',NULL,'');
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (175,8,'action','return result',0,2220,420,70,20,0,0,NULL,'',NULL,'');
-83a150,154
-> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (8,'quick_sort','-40 14','The classic quick sort algorithm.
+> comparer',0,310,60,50,40,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (228,12,'action','self.comparer = comparer',0,170,170,110,20,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (229,12,'commentout','Note that the argument list starts with
+> #comment
+> This makes the current procedure 
+> to be added as a method to the class.',0,610,60,170,50,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (230,12,'commentin','In order to make the code generator create a class,
+> add something like this to the File description:
 > 
-> Implemented as a method in a class.
-> The comparison function is stored
-> in the field ''comparer''.',100.0);
-88a160,161
-> INSERT INTO `diagram_info` (diagram_id,name,value) VALUES (7,'papersize','a4');
-> INSERT INTO `diagram_info` (diagram_id,name,value) VALUES (7,'orientation','portrait');
+> === class ===
+> class Sorter
+> 
+> Only one class per file is supported.',0,570,260,228,70,60,0,NULL,'',NULL,'');
+150c240,243
+< INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (8,'quick_sort','-40 14','The classic quick sort algorithm.
+---
+> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (8,'string_comparer','25 57','The comparer to use in the sorting demo.',100.0);
+> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (9,'quick_sort_demo','-160 2','A demo that creates a few arrays of strings and sorts them.',100.0);
+> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (10,'strings_are_sorted','-225 -100','Tests whether an array of strings is actually sorted.',100.0);
+> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (11,'quick_sort','-40 14','The classic quick sort algorithm.
+154a248
+> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (12,'__init__-2','24 -13','The constructor of class Sorter.',100.0);
+156,157d249
+< INSERT INTO `diagram_info` (diagram_id,name,value) VALUES (1,'papersize','a4');
+< INSERT INTO `diagram_info` (diagram_id,name,value) VALUES (1,'orientation','portrait');
