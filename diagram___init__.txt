@@ -1,0 +1,13 @@
+DRAKON 1.33 nodes 7 __init__ 24 -13 The constructor of class Sorter. 100.0 {114 beginend {__init__} {} {} 0 170 60 50 20 60 0 0 0} {115 beginend {End} {} {} 0 170 390 50 20 60 0 0 0} {116 vertical {} {} {} 0 170 80 0 290 0 0 0 0} {117 horizontal {} {} {} 0 200 60 80 0 0 0 0 0} {118 action {#method
+
+self
+comparer} {} {} 0 310 60 50 40 0 0 0 0} {119 action {self.comparer = comparer} {} {} 0 170 170 110 20 0 0 0 0} {120 commentout {Note that the argument list starts with
+#comment
+This makes the current procedure 
+to be added as a method to the class.} {} {} 0 610 60 170 50 60 0 0 0} {121 commentin {In order to make the code generator create a class,
+add something like this to the File description:
+
+=== class ===
+class Sorter
+
+Only one class per file is supported.} {} {} 0 570 260 228 70 60 0 0 0} 7 0 item 7

@@ -253,7 +253,7 @@ class DrakonBuranSilhouetteConverterV9:
                 node_id, parent, ntype = dia_id, 0, "item"
                 
             # Сборка финального Tcl-каркаса
-            tcl_output = f"DRAKON 1.33 nodes {{{{{dia_id} {name} {{{origin}}} {{{desc}}} {zoom} {{{items_str}}} {{}}}}} {{{{{node_id} {parent} {ntype} {{}} {dia_id}}}}}"
+            tcl_output = f"DRAKON 1.33 nodes {dia_id} {name} {origin} {desc} {zoom} {items_str} {node_id} {parent} {ntype} {dia_id}"
             
             filename = f"diagram_{name}.txt"
             with open(filename, "w", encoding="utf-8") as file_out:

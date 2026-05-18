@@ -1,0 +1,1 @@
+DRAKON 1.33 nodes 1 rmsnorm 0 250  120.0 {1 beginend {rmsnorm} {} {} 0 500 420 50 20 60 0 0 0} {2 beginend {Конец} {} {} 0 500 750 50 20 60 0 0 0} {3 action {return [xi * scale for xi in x]} {} {} 0 500 550 170 40 0 0 0 0} {4 vertical {} {} {} 0 500 420 0 340 0 0 0 0} {5 horizontal {} {} {} 0 530 420 140 0 0 0 0 0} {6 action {x} {} {} 0 690 420 50 20 0 0 0 0} 11 0 item 1
