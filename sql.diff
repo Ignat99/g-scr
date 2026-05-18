@@ -1,3 +1,34 @@
-28a29,30
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (8,1,'horizontal','',0,530,420,140,0,0,0,NULL,NULL,NULL,NULL);
-> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (9,1,'action','x',1,690,420,50,20,0,0,NULL,NULL,NULL,NULL);
+3a4
+> INSERT INTO `tree_nodes` (node_id,parent,type,name,diagram_id) VALUES (2,0,'item',NULL,2);
+5c6
+< INSERT INTO `state` (row,current_dia,description) VALUES (1,1,NULL);
+---
+> INSERT INTO `state` (row,current_dia,description) VALUES (1,2,NULL);
+23,24c24,25
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (1,1,'beginend','rmsnorm',0,500,420,50,20,60,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (2,1,'beginend','Конец',0,500,750,50,20,60,0,NULL,'',NULL,'');
+---
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (1,1,'beginend','rmsnorm',1,500,420,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (2,1,'beginend','Конец',1,500,750,50,20,60,0,NULL,'',NULL,'');
+27,29c28,30
+< return [xi * scale for xi in x]',0,500,550,170,40,0,0,NULL,'',NULL,'');
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (6,1,'vertical','',0,500,420,0,340,0,0,NULL,NULL,NULL,NULL);
+< INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (8,1,'horizontal','',0,530,420,140,0,0,0,NULL,NULL,NULL,NULL);
+---
+> return [xi * scale for xi in x]',1,500,550,170,40,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (6,1,'vertical','',1,500,420,0,340,0,0,NULL,NULL,NULL,NULL);
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (8,1,'horizontal','',1,530,420,140,0,0,0,NULL,NULL,NULL,NULL);
+30a32,39
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (10,2,'beginend','rmsnorm2',0,170,20,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (11,2,'beginend','Конец',0,170,350,50,20,60,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (12,2,'action','ms = sum((yi * yi for yi in y)) / len(y)
+> scale = (ms + 1e-05) ** (-0.5)
+> return [yi * scale for yi in y]',0,170,150,170,40,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (13,2,'vertical','',0,170,20,0,340,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (14,2,'horizontal','',0,200,20,140,0,0,0,NULL,'',NULL,'');
+> INSERT INTO `items` (item_id,diagram_id,type,text,selected,x,y,w,h,a,b,aux_value,color,format,text2) VALUES (15,2,'action','y',0,360,20,50,20,0,0,NULL,'',NULL,'');
+37c46,47
+< INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (1,'rmsnorm','0 291',NULL,120.0);
+---
+> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (1,'rmsnorm','0 250',NULL,120.0);
+> INSERT INTO `diagrams` (diagram_id,name,origin,description,zoom) VALUES (2,'rmsnorm2','-41 -82',NULL,120.0);

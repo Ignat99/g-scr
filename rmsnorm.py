@@ -6,3 +6,9 @@ def rmsnorm(x):
     return [xi * scale for xi in x]
 
 
+def rmsnorm2(y):
+    ms = sum((yi * yi for yi in y)) / len(y)
+    scale = (ms + 1e-05) ** (-0.5)
+    return [yi * scale for yi in y]
+
+

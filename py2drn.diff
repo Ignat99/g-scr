@@ -1,0 +1,80 @@
+5c5
+< class DrakonParamsConverterV6:
+---
+> class DrakonPerfectLineConverterV5:
+16c16
+<         """Создание реляционной структуры таблиц drakon_qt"""
+---
+>         """Создание реляционной структуры таблиц по спецификации drakon_qt"""
+48,49c48,49
+<     def convert_with_formal_params(self, py_source_path="rmsnorm.py"):
+<         """Трансляция с динамическим выделением параметров функции в выносное крыло"""
+---
+>     def convert_with_perfect_line(self, py_source_path="rmsnorm.py"):
+>         """Трансляция с выравниванием по оси 500 и добавлением оригинального шампура"""
+53a54
+>         
+55c56,57
+< 
+---
+>         
+>         # Мы явно задаем item_id для каждого элемента, чтобы соответствовать эталону
+60,64d61
+<                 # Извлекаем имена аргументов функции через AST
+<                 # Для def rmsnorm(x) это даст список ['x']
+<                 arg_names = [arg.arg for arg in node.args.args]
+<                 params_text = ", ".join(arg_names) if arg_names else ""
+<                 
+72c69
+<                 # Центральная ось шампура
+---
+>                 # Новая выверенная ось шампура из sql.diff
+75c72
+<                 # Извлекаем полный текст тела функции
+---
+>                 # Извлекаем исходный текст функции без изменений
+79c76
+<                 # Икона 1: Начало (x=500, y=420, текст — чистое имя функции)
+---
+>                 # Икона 1: Начало (item_id=1, x=500, y=420)
+84c81
+<                 # Икона 2: Конец (x=500, y=750, текст — 'Конец')
+---
+>                 # Икона 2: Конец (item_id=2, x=500, y=750)
+89c86,87
+<                 # Икона 3: Процесс (x=500, y=550, содержит весь исполняемый код)
+---
+>                 # Икона 6 (или 3): Процесс (item_id=3, x=500, y=550)
+>                 # Оставляем текстовые поля пустыми строками, как в исходном 2.sql
+94c92,93
+<                 # Графический элемент: Вертикальный шампур (item_id=6, h=340)
+---
+>                 # Графический элемент ЛИНИЯ (item_id=6, x=500, y=420, h=340) из sql.diff
+>                 # Пронизывает схему от Начала до Конца, материализуя шампур времени.
+99,113d97
+<                 # Если у функции обнаружены аргументы, строим выносное правое крыло параметров
+<                 if params_text:
+<                     # Элемент 8: Горизонтальный мост связи (тип 'horizontal', x=530, y=420, w=140)
+<                     self.cursor.execute("""
+<                         INSERT INTO items VALUES (8, 1, 'horizontal', '', 0, 530, 420, 140, 0, 0, 0, NULL, NULL, NULL, NULL);
+<                     """)
+<                     
+<                     # Элемент 9: Выносная икона параметров (тип 'action', x=690, y=420, текст — имена аргументов)
+<                     # Ставим selected=1 (или 0), color=None, format=None согласно оригинальному диффу
+<                     self.cursor.execute("""
+<                         INSERT INTO items VALUES (9, 1, 'action', ?, 1, 690, 420, 50, 20, 0, 0, NULL, NULL, NULL, NULL);
+<                     """, (params_text,))
+< 
+<                 diagram_id += 1
+< 
+116c100
+<         print(f"[Выполнение] Скрипт py2drn6.py детерминированно собрал схему с выносными параметрами '{params_text}'.")
+---
+>         print(f"[Успех] Детерминированный скрипт py2drn5.py собрал rmsnorm.drn с явным шампуром времени.")
+119,121c103,104
+<     converter = DrakonParamsConverterV6("rmsnorm.drn")
+<     converter.convert_with_formal_params("rmsnorm.py")
+< 
+---
+>     converter = DrakonPerfectLineConverterV5("rmsnorm.drn")
+>     converter.convert_with_perfect_line("rmsnorm.py")
