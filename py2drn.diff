@@ -1,4 +1,168 @@
-256c256
-<             tcl_output = f"DRAKON 1.33 nodes /{/{/{/{{dia_id} {name} /{/{{origin}/}/} /{/{{desc}/}/} {zoom} /{/{{items_str}/}/} /{/{/}/}/}/}/} /{/{/{/{{node_id} {parent} {ntype} /{/{/}/} {dia_id}/}/}/}/}"
+5c5
+< class DrakonPerfectLineConverterV5:
 ---
->             tcl_output = f"DRAKON 1.33 nodes {dia_id} {name} {origin} {desc} {zoom} {items_str} {node_id} {parent} {ntype} {dia_id}"
+> class FinalDrakonConverter:
+13c13,33
+<         self._build_exact_schema()
+---
+>         self._create_exact_tables()
+> 
+>     def _create_exact_tables(self):
+>         """Создание реляционной структуры в точном соответствии с эталоном 2.sql"""
+>         self.cursor.execute("""
+>             CREATE TABLE tree_nodes (
+>                 node_id integer primary key,
+>                 parent integer,
+>                 type text,
+>                 name text,
+>                 diagram_id integer
+>             );
+>         """)
+> 
+>         self.cursor.execute("""
+>             CREATE TABLE state (
+>                 row integer primary key,
+>                 current_dia integer,
+>                 description text
+>             );
+>         """)
+15,18d34
+<     def _build_exact_schema(self):
+<         """Создание реляционной структуры таблиц по спецификации drakon_qt"""
+<         self.cursor.execute("CREATE TABLE tree_nodes (node_id integer primary key, parent integer, type text, name text, diagram_id integer);")
+<         self.cursor.execute("CREATE TABLE state (row integer primary key, current_dia integer, description text);")
+38c54,61
+<         self.cursor.execute("CREATE TABLE info (key text primary key, value text);")
+---
+> 
+>         self.cursor.execute("""
+>             CREATE TABLE info (
+>                 key text primary key,
+>                 value text
+>             );
+>         """)
+>         # Системные маркеры среды DRAKONEditor
+44,45c67,84
+<         self.cursor.execute("CREATE TABLE diagrams (diagram_id integer primary key, name text unique, origin text, description text, zoom double);")
+<         self.cursor.execute("CREATE TABLE diagram_info (diagram_id integer, name text, value text, primary key (diagram_id, name));")
+---
+>         self.cursor.execute("""
+>             CREATE TABLE diagrams (
+>                 diagram_id integer primary key,
+>                 name text unique,
+>                 origin text,
+>                 description text,
+>                 zoom double
+>             );
+>         """)
+> 
+>         self.cursor.execute("""
+>             CREATE TABLE diagram_info (
+>                 diagram_id integer,
+>                 name text,
+>                 value text,
+>                 primary key (diagram_id, name)
+>             );
+>         """)
+48,49c87,88
+<     def convert_with_perfect_line(self, py_source_path="rmsnorm.py"):
+<         """Трансляция с выравниванием по оси 500 и добавлением оригинального шампура"""
+---
+>     def convert(self, py_source_path="microgpt.py"):
+>         """Парсинг Python-кода и точное мощение структуры ДРАКОН"""
+56,57c95,96
+<         
+<         # Мы явно задаем item_id для каждого элемента, чтобы соответствовать эталону
+---
+>         item_id = 1
+> 
+59c98
+<             if isinstance(node, ast.FunctionDef) and node.name == "rmsnorm":
+---
+>             if isinstance(node, ast.FunctionDef):
+62,74c101,110
+<                 # Системное дерево проекта
+<                 self.cursor.execute("INSERT INTO tree_nodes VALUES (1, 0, 'item', NULL, ?);", (diagram_id,))
+<                 self.cursor.execute("INSERT INTO state VALUES (1, 1, NULL);")
+<                 self.cursor.execute("INSERT INTO diagrams VALUES (1, ?, '0 250', NULL, 120.0);", (func_name,))
+<                 self.cursor.execute("INSERT INTO diagram_info VALUES (1, 'papersize', 'a4');")
+<                 self.cursor.execute("INSERT INTO diagram_info VALUES (1, 'orientation', 'portrait');")
+< 
+<                 # Новая выверенная ось шампура из sql.diff
+<                 center_x = 500
+< 
+<                 # Извлекаем исходный текст функции без изменений
+<                 body_lines = [ast.unparse(stmt).strip() for stmt in node.body]
+<                 function_body_text = "\n".join(body_lines)
+---
+>                 # 1. Запись в tree_nodes и state
+>                 self.cursor.execute("INSERT INTO tree_nodes VALUES (?, 0, 'item', NULL, ?);", (diagram_id, diagram_id))
+>                 self.cursor.execute("INSERT INTO state VALUES (?, ?, NULL);", (diagram_id, diagram_id))
+>                 
+>                 # 2. Запись в diagrams (origin '0 250' и zoom 120.0 строго по эталону)
+>                 self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 120.0);", (diagram_id, func_name))
+>                 
+>                 # Метаданные разметки листа
+>                 self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (diagram_id,))
+>                 self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (diagram_id,))
+76c112,115
+<                 # Икона 1: Начало (item_id=1, x=500, y=420)
+---
+>                 # Координатная сетка оси шампура (X = 510)
+>                 center_x = 510
+>                 
+>                 # Икона «Начало» (тип: 'beginend', имя функции, y=420, w=50, h=20, a=60, b=0)
+78,79c117,119
+<                     INSERT INTO items VALUES (1, 1, 'beginend', ?, 0, ?, 420, 50, 20, 60, 0, NULL, '', NULL, '');
+<                 """, (func_name, center_x))
+---
+>                     INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, 420, 50, 20, 60, 0, NULL, '', NULL, '');
+>                 """, (item_id, diagram_id, func_name, center_x))
+>                 item_id += 1
+81c121
+<                 # Икона 2: Конец (item_id=2, x=500, y=750)
+---
+>                 # Икона «Конец» (тип: 'beginend', текст 'Конец', y=750, w=50, h=20, a=60, b=0)
+83,84c123,125
+<                     INSERT INTO items VALUES (2, 1, 'beginend', 'Конец', 0, ?, 750, 50, 20, 60, 0, NULL, '', NULL, '');
+<                 """, (center_x,))
+---
+>                     INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', 0, ?, 750, 50, 20, 60, 0, NULL, '', NULL, '');
+>                 """, (item_id, diagram_id, center_x))
+>                 item_id += 1
+86,90c127,129
+<                 # Икона 6 (или 3): Процесс (item_id=3, x=500, y=550)
+<                 # Оставляем текстовые поля пустыми строками, как в исходном 2.sql
+<                 self.cursor.execute("""
+<                     INSERT INTO items VALUES (3, 1, 'action', ?, 0, ?, 550, 170, 40, 0, 0, NULL, '', NULL, '');
+<                 """, (function_body_text, center_x))
+---
+>                 # Извлекаем все строки внутренностей функции без изменений
+>                 body_lines = [ast.unparse(stmt).strip() for stmt in node.body]
+>                 function_body_text = "\n".join(body_lines)
+92,93c131
+<                 # Графический элемент ЛИНИЯ (item_id=6, x=500, y=420, h=340) из sql.diff
+<                 # Пронизывает схему от Начала до Конца, материализуя шампур времени.
+---
+>                 # Икона «Процесс» (тип: 'action', содержит ВЕСЬ код, y=550, w=170, h=40)
+95,96c133,137
+<                     INSERT INTO items VALUES (6, 1, 'vertical', '', 0, 500, 420, 0, 340, 0, 0, NULL, NULL, NULL, NULL);
+<                 """)
+---
+>                     INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, 550, 170, 40, 0, 0, NULL, '', NULL, '');
+>                 """, (item_id, diagram_id, function_body_text, center_x))
+>                 
+>                 item_id += 1
+>                 diagram_id += 1
+100c141
+<         print(f"[Успех] Детерминированный скрипт py2drn5.py собрал rmsnorm.drn с явным шампуром времени.")
+---
+>         print(f"[Детерминизм] Конвертация завершена. Файл {self.drn_path} полностью совместим с эталоном.")
+103,104c144,147
+<     converter = DrakonPerfectLineConverterV5("rmsnorm.drn")
+<     converter.convert_with_perfect_line("rmsnorm.py")
+---
+>     # Запуск обработки исходного файла
+>     converter = FinalDrakonConverter("rmsnorm.drn")
+>     converter.convert("rmsnorm.py")
+>   

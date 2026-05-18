@@ -3,7 +3,7 @@ import sqlite3
 import os
 
 class DrakonParamsConverterV6:
-    def __init__(self, drn_path="rmsnorm.drn"):
+    def __init__(self, drn_path="microgpt.drn"):
         self.drn_path = drn_path
         if os.path.exists(self.drn_path):
             os.remove(self.drn_path)
@@ -45,7 +45,7 @@ class DrakonParamsConverterV6:
         self.cursor.execute("CREATE TABLE diagram_info (diagram_id integer, name text, value text, primary key (diagram_id, name));")
         self.conn.commit()
 
-    def convert_with_formal_params(self, py_source_path="rmsnorm.py"):
+    def convert_with_formal_params(self, py_source_path="microgpt.py"):
         """Трансляция с динамическим выделением параметров функции в выносное крыло"""
         with open(py_source_path, "r", encoding="utf-8") as f:
             source_code = f.read()
@@ -136,6 +136,6 @@ class DrakonParamsConverterV6:
         print(f"[Выполнение] Скрипт py2drn6.py детерминированно собрал схему с выносными параметрами '{params_text}'.")
 
 if __name__ == "__main__":
-    converter = DrakonParamsConverterV6("rmsnorm.drn")
-    converter.convert_with_formal_params("rmsnorm.py")
+    converter = DrakonParamsConverterV6("microgpt.drn")
+    converter.convert_with_formal_params("microgpt.py")
 

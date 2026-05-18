@@ -49,6 +49,7 @@ class PyToDrakonConverter:
         
         # Перебираем функции верхнего уровня (например, gpt, softmax)
         for node in ast.iter_child_nodes(tree):
+            print(f"node: {node}")
             if isinstance(node, ast.FunctionDef):
                 self._convert_function_to_diagram(node)
 
