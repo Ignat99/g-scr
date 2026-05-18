@@ -19,10 +19,51 @@ def rmsnorm2(y):
     return [yi * scale for yi in y]
 
 class Sorter:
-    foo = ""
+    foo = ''
 
 
     def __init__(self, comparer):
         self.comparer = comparer
+
+
+    def quick_sort(self, collection):
+        length = len(collection)
+        if (length == 0) or (length == 1):
+            result = collection
+        else:
+            if length == 2:
+                first = collection[0]
+                second = collection[1]
+                if self.comparer(first, second) < 0:
+                    result = collection
+                else:
+                    result = [ second, first ]
+            else:
+                half = int(length / 2)
+                median = collection[half]
+                left = []
+                right = []
+                i = 0
+                while True:
+                    if i < length:
+                        pass
+                    else:
+                        break
+                    if i == half:
+                        pass
+                    else:
+                        current = collection[i]
+                        if self.comparer(current, median) < 0:
+                            left.append(current)
+                        else:
+                            right.append(current)
+                    i += 1
+                left_sorted = self.quick_sort(left)
+                right_sorted = self.quick_sort(right)
+                result = []
+                result.extend(left_sorted)
+                result.append(median)
+                result.extend(right_sorted)
+        return result
 
 main()
