@@ -145,8 +145,8 @@ class DrakonBuranSpaceConverterV8:
             # Регистрация листа в системном дереве
 #Ignat: The same error from Gemeni in logic like about folders
 #            self.cursor.execute("INSERT INTO tree_nodes VALUES (?, 0, 'item', NULL, ?);", (diagram_id + 10, diagram_id)) # Безопасный node_id
+#Ignat: Ver py2drn7.py            self.cursor.execute("INSERT INTO tree_nodes (node_id, parent, type, name, diagram_id) VALUES (?, 1, 'item', ?, ?);", (diagram_tree_id, func_name, diagram_id,))
             self.cursor.execute("INSERT INTO tree_nodes (node_id, parent, type, name, diagram_id) VALUES (?, 1, 'item', ?, ?);", (diagram_tree_id, func_name, diagram_id))
-#            self.cursor.execute("INSERT INTO tree_nodes (node_id, parent, type, name, diagram_id) VALUES (?, 1, 'item', ?, ?);", (diagram_tree_id, func_name, diagram_id,))
 
             # Дифференцированная геометрия и метаданные листов (Лист 1 vs Лист 2+)
             if idx == 0:
@@ -210,7 +210,7 @@ class DrakonBuranSpaceConverterV8:
 
 
             # Запись метаданных холста диаграммы
-#            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 120.0);", (diagram_id, func_name,))
+# py2drn   self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 120.0);", (diagram_id, func_name,))
 #            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (diagram_id,))
 #            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (diagram_id,))
                     # Сборка листа метода
@@ -226,7 +226,7 @@ class DrakonBuranSpaceConverterV8:
 
 
 #            """
-#                INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');
+# py2drn7        INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');
 #            """, (item_id, diagram_id, func_name, selected_flag, center_x, y_begin))
 #            """
 #                INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');
@@ -250,25 +250,6 @@ class DrakonBuranSpaceConverterV8:
 
             # Если у функции обнаружены аргументы, строим выносное правое крыло параметров
             # Выносное крыло формальных параметров
-#            if params_text:
-                # Элемент 8: Горизонтальный мост связи (тип 'horizontal', x=530, y=420, w=140)
-                # Горизонтальный мост
-#                self.cursor.execute("""
-#                    INSERT INTO items VALUES (?, ?, 'horizontal', '', ?, ?, ?, ?, 0, 0, 0, NULL, NULL, NULL, NULL);
-#                """, (item_id, diagram_id, selected_flag, bridge_x, y_begin, bridge_w))
-#                item_id += 1
-                
-                # Элемент 9: Выносная икона параметров (тип 'action', x=690, y=420, текст — имена аргументов)
-                # Ставим selected=1 (или 0), color=None, format=None согласно оригинальному диффу
-                # Икона параметров (тип 'action' по канону drakon_qt)
-                # Обратите внимание: для второй диаграммы selected=0 по вашему диффу
-#                self.cursor.execute("""
-#                    INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 50, 20, 0, 0, NULL, NULL, NULL, NULL);
-#                """, (item_id, diagram_id, params_text, selected_flag if idx == 0 else 0, param_x, y_begin))
-#                item_id += 1
-
-
-
                     # Выносное крыло параметров с тегом #method
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', ?, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, selected_flag, bridge_x, y_begin, bridge_w))
                     item_id += 1
@@ -294,19 +275,6 @@ class DrakonBuranSpaceConverterV8:
 #                    diagram_id = method_dia_id
                     diagram_id += 1
                     diagram_tree_id += 1
-
-
-
-
-
-
-#        #Last diagram id without last increment
-##        self.cursor.execute("INSERT INTO state VALUES (1, ?, NULL);", (diagram_id-1,))
-
-
-#        self.cursor.execute("INSERT INTO state VALUES (1, ?, NULL);", ())
-
-
 
 
 
