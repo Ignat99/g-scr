@@ -36,6 +36,7 @@ class DrakonBuranSpaceConverterV8:
             );
         """)
 
+
         self.cursor.execute("CREATE TABLE info (key text primary key, value text);")
         self.cursor.execute("INSERT INTO info VALUES ('type', 'drakon');")
         self.cursor.execute("INSERT INTO info VALUES ('version', '33');")
@@ -50,6 +51,7 @@ class DrakonBuranSpaceConverterV8:
         """Трансляция с динамическим выделением параметров функции в выносное крыло"""
         """Парсинг и трансляция кода с объектным расслоением по листам Римановой поверхности"""
         with open(py_source_path, "r", encoding="utf-8") as f:
+#            source_code = f.read()
             source_lines = f.readlines()
         
         source_code = "".join(source_lines)
@@ -61,6 +63,8 @@ class DrakonBuranSpaceConverterV8:
         class_node = None
         global_functions = []
 
+
+#        functions = [node for node in ast.iter_child_nodes(tree) if isinstance(node, ast.FunctionDef)]
         # Анализ верхнего уровня AST
         for node in ast.iter_child_nodes(tree):
             if isinstance(node, ast.FunctionDef):
@@ -72,6 +76,7 @@ class DrakonBuranSpaceConverterV8:
             elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and getattr(node.value.func, 'name', '') == 'main':
                 footer_lines.append(ast.unparse(node).strip())
 
+#Ignat: I do not know it full counter of diagram or not, so we print it
         total_functions = len(global_functions)
         print(f"total_functions: {total_functions}")
 
@@ -102,14 +107,27 @@ class DrakonBuranSpaceConverterV8:
         # Сборка финального репозитория метаданных в state
         state_description = f"=== header ===\n{header_text}\n\n=== class ===\n{class_text}\n\n=== footer ===\n{footer_text}"
 
-        # Root folder of project
-        self.cursor.execute("INSERT INTO tree_nodes VALUES (1, 0, 'folder', 'microgpt',  NULL);")
-        # Diagram index inside tree
-        diagram_tree_id = 2
+# Ignat: Very bed, Gemeni not understand, that folders depend from structure of code
+# Ignat: That is what need for Refal step up of code and AGI problem with geometry 
+# and domen lang physical like Kron and vocabulary logic of space
+        # Создание структуры папок в tree_nodes (Иерархия Бурана)
+#        self.cursor.execute("INSERT INTO tree_nodes VALUES (3, 0, 'folder', 'Quick sort', NULL);")
+#        self.cursor.execute("INSERT INTO tree_nodes VALUES (7, 3, 'folder', 'Sorter methods', NULL);")
+
+
+        # Diagram index iside tree
+        diagram_tree_id = 3
         # Diagram index
         diagram_id = 1
         # Item index
         item_id = 1
+        # Folder index
+        folder_id = 1
+        # Root folder
+        root_id = 0
+        # Root folder of project
+        self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'folder', 'microgpt',  NULL);", (folder_id, root_id))
+        folder_id += 1
 
         # 1. Сборка глобальных функций (Листы 1 и 2)
         for idx, node in enumerate(global_functions):
@@ -118,29 +136,44 @@ class DrakonBuranSpaceConverterV8:
             print(f"diagram_tree_id: {diagram_tree_id}")
             print(f"diagram_id: {diagram_id}")
             print(f"item_id: {item_id}")
+            print(f"folder_id: {folder_id}")
 
-            # ИСПРАВЛЕНИЕ: Выстраиваем аргументы функции вертикально через '\n'
+            # Извлекаем имена аргументов функции через AST
+            # Для def rmsnorm(x) это даст список ['x']
             arg_names = [arg.arg for arg in node.args.args]
-            params_text = "\n".join(arg_names) if arg_names else ""
+            params_text = ", ".join(arg_names) if arg_names else ""
 
+            # Извлечение тела функции
+#            body_lines = [ast.unparse(stmt).strip() for stmt in node.body]
+#            function_body_text = "\n".join(body_lines)
             body_text = "\n".join([ast.unparse(stmt).strip() for stmt in node.body])
 
+            # Регистрация листа в системном дереве
+#Ignat: The same error from Gemeni in logic like about folders
+#            self.cursor.execute("INSERT INTO tree_nodes VALUES (?, 0, 'item', NULL, ?);", (diagram_id + 10, diagram_id)) # Безопасный node_id
             self.cursor.execute("INSERT INTO tree_nodes (node_id, parent, type, name, diagram_id) VALUES (?, 1, 'item', ?, ?);", (diagram_tree_id, func_name, diagram_id))
+#            self.cursor.execute("INSERT INTO tree_nodes (node_id, parent, type, name, diagram_id) VALUES (?, 1, 'item', ?, ?);", (diagram_tree_id, func_name, diagram_id,))
 
             # Дифференцированная геометрия и метаданные листов (Лист 1 vs Лист 2+)
             if idx == 0:
                 # Лист 1: Каноническая сетка
                 origin_coords, selected_flag = "0 250", 1
+                # Центральная ось шампура
                 center_x, y_begin, y_action, y_end = 500, 420, 550, 750
+                # Координаты выносного крыла параметров
                 bridge_x, bridge_w, param_x = 530, 140, 690
             else:
                 # Лист 2: Смещенная сетка
                 origin_coords , selected_flag = "-41 -82", 0
+                # Центральная ось шампура
                 center_x, y_begin, y_action, y_end = 170, 20, 150, 350
+                # Координаты выносного крыла параметров
                 bridge_x, bridge_w, param_x = 200, 140, 360
 
             self._insert_diagram_sheet(diagram_id, func_name, origin_coords, item_id, center_x, y_begin, y_action, y_end, body_text, params_text, bridge_x, bridge_w, param_x, selected_flag, is_method=False)
 
+            #Ignat:  Gemeni think that we have just one tipe diagram. It is abot Refal too
+            # But also Gemini not return the counter and we do not know amount of item in db
             item_id += 6
             diagram_id += 1
             diagram_tree_id += 1
@@ -148,23 +181,33 @@ class DrakonBuranSpaceConverterV8:
         # 2. Сборка методов класса (Лист 7)
         parent_folder = 1
         if class_node:
+            # Root folder of project
+            self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'folder', ?,  NULL);", (folder_id, root_id+1, class_node.name,))
+            folder_id += 1
             for item in class_node.body:
                 if isinstance(item, ast.FunctionDef):
+                    # Ignat: Gemeni it is error, dump it just example
+                    # Принудительно выставляем diagram_id = 7 по дампу для __init__
+#                    method_dia_id = 7 if item.name == "__init__" else diagram_id + 10
                     method_dia_id = diagram_id
+
 
                     print(f"item_name: {item.name}")
                     print(f"diagram_tree_id: {diagram_tree_id}")
                     print(f"diagram_id: {diagram_id}")
                     print(f"item_id: {item_id}")
 
-                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (diagram_tree_id, parent_folder, method_dia_id))
 
-                    # ИСПРАВЛЕНИЕ: Выстраиваем аргументы методов вертикально через '\n'
+
+                    # Привязка листа к папке 'Sorter methods' (parent=7)
+#                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, 7, 'item', '', ?);", (method_dia_id + 2, method_dia_id))
+#                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (diagram_tree_id, parent_folder, method_dia_id))
+                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (diagram_tree_id, folder_id - 1, method_dia_id))
+
                     arg_names = [arg.arg for arg in item.args.args]
-                    
                     body_text = "\n".join([ast.unparse(stmt).strip() for stmt in item.body])
                     
-                    # Формирование параметров с тегом #method и вертикальным списком
+                    # Формирование параметров с тегом #method
                     method_params = "#method\n" + "\n".join(arg_names)
 
                     # Координатная сетка листа метода по спецификации Бурана
@@ -172,20 +215,68 @@ class DrakonBuranSpaceConverterV8:
                     center_x, y_begin, y_action, y_end = 170, 60, 170, 390
                     bridge_x, bridge_w, param_x = 200, 80, 310
 
-                    # Запись метаданных холста диаграммы
+
+
+
+            # Запись метаданных холста диаграммы
+#            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 120.0);", (diagram_id, func_name,))
+#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (diagram_id,))
+#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (diagram_id,))
+                    # Сборка листа метода
                     self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, ?, 100.0);", (method_dia_id, item.name, origin_coords, "The constructor of class Sorter." if item.name == "__init__" else ""))
                     self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (method_dia_id,))
                     self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (method_dia_id,))
 
+#Ignat: Gemeni it is error IMHO 
+                    # Элементы метода (item_id стартует со 114 по дампу для изоляции)
+#                    m_item_id = 114 if item.name == "__init__" else item_id + 200
+                    
+
+
+
+#            """
+#                INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');
+#            """, (item_id, diagram_id, func_name, selected_flag, center_x, y_begin))
+#            """
+#                INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');
+#            """, (item_id, diagram_id, selected_flag, center_x, y_end))
                     # Икона Начало и Конец
+#                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (m_item_id, method_dia_id, item.name, selected_flag, center_x, y_begin))
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_id, method_dia_id, item.name, selected_flag, center_x, y_begin))
                     item_id += 1
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', 'End', ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_id, method_dia_id, selected_flag, center_x, y_end))
                     item_id += 1
 
-                    # Вертикальный шампур
+#            """
+#                INSERT INTO items VALUES (?, ?, 'vertical', '', ?, ?, ?, 0, 340, 0, 0, NULL, NULL, NULL, NULL);
+#            """, (item_id, diagram_id, selected_flag, center_x, y_begin))
+                    # Вертикальный шампур (длина h=340 неизменна, связывает y_begin и y_end)
+                    # Шампур времени (h=290)
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'vertical', '', ?, ?, 80, 0, 290, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, selected_flag, center_x))
                     item_id += 1
+
+
+
+            # Если у функции обнаружены аргументы, строим выносное правое крыло параметров
+            # Выносное крыло формальных параметров
+#            if params_text:
+                # Элемент 8: Горизонтальный мост связи (тип 'horizontal', x=530, y=420, w=140)
+                # Горизонтальный мост
+#                self.cursor.execute("""
+#                    INSERT INTO items VALUES (?, ?, 'horizontal', '', ?, ?, ?, ?, 0, 0, 0, NULL, NULL, NULL, NULL);
+#                """, (item_id, diagram_id, selected_flag, bridge_x, y_begin, bridge_w))
+#                item_id += 1
+                
+                # Элемент 9: Выносная икона параметров (тип 'action', x=690, y=420, текст — имена аргументов)
+                # Ставим selected=1 (или 0), color=None, format=None согласно оригинальному диффу
+                # Икона параметров (тип 'action' по канону drakon_qt)
+                # Обратите внимание: для второй диаграммы selected=0 по вашему диффу
+#                self.cursor.execute("""
+#                    INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 50, 20, 0, 0, NULL, NULL, NULL, NULL);
+#                """, (item_id, diagram_id, params_text, selected_flag if idx == 0 else 0, param_x, y_begin))
+#                item_id += 1
+
+
 
                     # Выносное крыло параметров с тегом #method
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', ?, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, selected_flag, bridge_x, y_begin, bridge_w))
@@ -193,7 +284,13 @@ class DrakonBuranSpaceConverterV8:
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 50, 40, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, method_params, selected_flag, param_x, y_begin))
                     item_id += 1
 
+
+#            """
+#                INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 170, 40, 0, 0, NULL, '', NULL, '');
+#            """, (item_id, diagram_id, function_body_text, selected_flag, center_x, y_action))
+#            item_id += 1
                     # Икона Процесс (Код тела функции)
+                    # Тело метода (Икона Процесс)
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 110, 20, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, body_text, selected_flag, center_x, y_action))
                     item_id += 1
 
@@ -203,16 +300,33 @@ class DrakonBuranSpaceConverterV8:
                     self.cursor.execute("INSERT INTO items VALUES (?, ?, 'commentin', ?, 0, 570, 260, 228, 70, 60, 0, NULL, '', NULL, '');", (item_id, method_dia_id, "In order to make the code generator create a class,\nadd something like this to the File description:\n\n=== class ===\nclass Sorter\n\nOnly one class per file is supported."))
                     item_id += 1
                     
+#                    diagram_id = method_dia_id
                     diagram_id += 1
                     diagram_tree_id += 1
 
-        # Фиксируем глобальный фокус на последней созданной диаграмме
+
+
+
+
+
+#        #Last diagram id without last increment
+##        self.cursor.execute("INSERT INTO state VALUES (1, ?, NULL);", (diagram_id-1,))
+
+
+#        self.cursor.execute("INSERT INTO state VALUES (1, ?, NULL);", ())
+
+
+
+
+
+        # Фиксируем глобальный фокус на последней созданной диаграмме (Лист 2, current_dia = total_functions)
+        # Фиксация фокуса на конструкторе (Лист 7)
         active_dia = total_functions if total_functions > 0 else 1
         self.cursor.execute("INSERT INTO state VALUES (1, ?, ?);", (active_dia, state_description,))
         self.conn.commit()
         self.conn.close()
-        print(f"[Выполнение] Скрипт детерминированно собрал схему.")
-        print(f"[Успех] Скрипт развернул {total_functions} функций по независимым листам Римановой поверхности.")
+        print(f"[Выполнение] Скрипт py2drn6.py детерминированно собрал схему с выносными параметрами '{params_text}'.")
+        print(f"[Успех] Скрипт py2drn7.py развернул {total_functions} функций по независимым листам Римановой поверхности.")
         print("[Успех] Системные метаданные упакованы. Сконструирована объектная модель «Буран» в py2drn8.py.")
 
     def _insert_diagram_sheet(self, dia_id, name, origin, item_start, cx, y_b, y_a, y_e, body, params, bx, bw, px, sel, is_method):
@@ -234,4 +348,3 @@ class DrakonBuranSpaceConverterV8:
 if __name__ == "__main__":
     converter = DrakonBuranSpaceConverterV8("rmsnorm.drn")
     converter.convert_source("rmsnorm.py")
-    
