@@ -208,25 +208,28 @@ class DrakonBuranSilhouetteConverterV10:
         y_nodes_start = 220
 
         # Главная икона Начало (всегда на 1-м шампуре)
-        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, ?, 60, 20, 0, 0, None, '', None, '');", 
+#        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, ?, 60, 20, 0, 0, NULL, '', NULL, '');", 
+#                            (item_start, dia_id, name, start_x, y_header))
+#        self.cursor.execute("INSERT INTO items                                                                                                VALUES (?, ?, 'beginend', ?, 0, 170, 60, 50, 20, 60, 0, NULL, '', NULL, '');", (item_start, dia_id, name))
+        self.cursor.execute("INSERT INTO items (item_id, diagram_id, type, text, selected, x, y, w, h, a, b, aux_value, color, format, text2) VALUES (?, ?, 'beginend', ?, 0,   ?,  ?, 60, 20,  0, 0, NULL, '', NULL, '');", 
                             (item_start, dia_id, name, start_x, y_header))
         item_start += 1
 
         # Конечная точка Силуэта (находится на самом правом невидимом шампуре выхода)
         exit_x = start_x + (num_branches * step_x)
-        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', 0, ?, ?, 50, 20, 0, 0, None, '', None, '');", 
+        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', 0, ?, ?, 50, 20, 0, 0, NULL, '', NULL, '');", 
                             (item_start, dia_id, exit_x, y_nodes_start + 150))
         item_start += 1
 
         # Горизонтальная шина Силуэта (главный распределитель)
-        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', 0, ?, ?, ?, 0, 0, 0, None, '', None, '');", 
+        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', 0, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');", 
                             (item_start, dia_id, start_x, y_branch_line, num_branches * step_x))
         item_start += 1
 
         # Вынос параметров (если есть)
         if params:
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', 0, ?, ?, 80, 0, 0, 0, None, '', None, '');", (item_start, dia_id, start_x + 40, y_header))
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 80, 30, 0, 0, None, '', None, '');", (item_start + 1, dia_id, params, start_x + 160, y_header))
+            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', 0, ?, ?, 80, 0, 0, 0, NULL, '', NULL, '');", (item_start, dia_id, start_x + 40, y_header))
+            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 80, 30, 0, 0, NULL, '', NULL, '');", (item_start + 1, dia_id, params, start_x + 160, y_header))
             item_start += 2
 
         # 2. Строим структуру шампуров
@@ -234,28 +237,28 @@ class DrakonBuranSilhouetteConverterV10:
             cx = start_x + (idx * step_x)
             
             # Вертикальный шампур
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'vertical', '', 0, ?, ?, 0, 400, 0, 0, None, '', None, '');", 
+            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'vertical', '', 0, ?, ?, 0, 400, 0, 0, NULL, '', NULL, '');", 
                                 (item_start, dia_id, cx, y_branch_line))
             item_start += 1
 
             # Икона «Ветка» (Заголовок шампура)
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 140, 30, 0, 0, None, '', None, '');", 
+            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 140, 30, 0, 0, NULL, '', NULL, '');", 
                                 (item_start, dia_id, b_name, cx, y_branch_line + 40))
             item_start += 1
 
             # Икона «Процесс» с распарсенным телом кода на этом шампуре
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 80, 0, 0, None, '', None, '');", 
+            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 80, 0, 0, NULL, '', NULL, '');", 
                                 (item_start, dia_id, b_code, cx, y_nodes_start + 60))
             item_start += 1
 
             # Икона «Адрес» (Указатель куда идти дальше)
             if idx < num_branches - 1:
                 next_branch_name = branches[idx + 1][0]
-                self.cursor.execute("INSERT INTO items VALUES (?, ?, 'address', ?, 0, ?, ?, 140, 30, 0, 0, None, '', None, '');", 
+                self.cursor.execute("INSERT INTO items VALUES (?, ?, 'address', ?, 0, ?, ?, 140, 30, 0, 0, NULL, '', NULL, '');", 
                                     (item_start, dia_id, next_branch_name, cx, y_nodes_start + 200))
             else:
                 # Последний шампур передает управление на «Конец»
-                self.cursor.execute("INSERT INTO items VALUES (?, ?, 'address', 'Конец', 0, ?, ?, 140, 30, 0, 0, None, '', None, '');", 
+                self.cursor.execute("INSERT INTO items VALUES (?, ?, 'address', 'Конец', 0, ?, ?, 140, 30, 0, 0, NULL, '', NULL, '');", 
                                     (item_start, dia_id, cx, y_nodes_start + 200))
             item_start += 1
 
