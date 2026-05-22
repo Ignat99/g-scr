@@ -2,6 +2,7 @@ import ast
 import sqlite3
 import os
 
+
 class DrakonBuranSilhouetteConverterV9:
     def __init__(self, drn_path="rmsnorm.drn"):
         self.drn_path = drn_path
@@ -45,11 +46,15 @@ class DrakonBuranSilhouetteConverterV9:
         self.cursor.execute("CREATE TABLE diagram_info (diagram_id integer, name text, value text, primary key (diagram_id, name));")
         self.conn.commit()
 
+
+
+
+
     def convert_source(self, py_source_path="rmsnorm.py"):
         """Парсинг и трансляция кода с объектным расслоением по листам Римановой поверхности и Силуэту"""
         with open(py_source_path, "r", encoding="utf-8") as f:
             source_lines = f.readlines()
-        
+
         source_code = "".join(source_lines)
         tree = ast.parse(source_code)
 
@@ -59,6 +64,10 @@ class DrakonBuranSilhouetteConverterV9:
         class_node = None
         global_functions = []
 
+
+
+#        functions = [node for node in ast.iter_child_nodes(tree) if isinstance(node, ast.FunctionDef)]
+        # Анализ верхнего уровня AST
         for node in ast.iter_child_nodes(tree):
             if isinstance(node, ast.FunctionDef):
                 global_functions.append(node)
@@ -68,6 +77,12 @@ class DrakonBuranSilhouetteConverterV9:
                 header_lines.append(ast.unparse(node).strip())
             elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and getattr(node.value.func, 'name', '') == 'main':
                 footer_lines.append(ast.unparse(node).strip())
+
+
+#Ignat: I do not know it full counter of diagram or not, so we print it
+        total_functions = len(global_functions)
+        print(f"total_functions: {total_functions}")
+
 
         # Сбор шебанга и комментариев верхнего уровня
         raw_headers = []
@@ -80,6 +95,12 @@ class DrakonBuranSilhouetteConverterV9:
                 break
         header_text = "\n".join(raw_headers).strip()
 
+
+
+
+
+
+
         # Формирование блока === class === с экранированием кавычек согласно diff
         class_text = ""
         if class_node:
@@ -87,177 +108,359 @@ class DrakonBuranSilhouetteConverterV9:
             body_parts = []
             for item in class_node.body:
                 if isinstance(item, ast.Assign):
+#                    body_parts.append(f"    {ast.unparse(item).strip()}")
                     val = ast.unparse(item).strip()
                     if "foo =" in val:
                         val = "    foo = ''''" # Четверное экранирование из верифицированного diff
                     body_parts.append(val)
             class_text = class_decl + "\n" + "\n".join(body_parts)
 
+        # Формирование блока === footer ===
         footer_text = "\n".join(footer_lines).strip() if footer_lines else "main()"
+
+        # Сборка финального репозитория метаданных в state
         state_description = f"=== header ===\n{header_text}\n\n=== class ===\n{class_text}\n\n=== footer ===\n{footer_text}"
 
+
+        # Diagram index iside tree
+        diagram_tree_id = 3
+        # Diagram index
+        diagram_id = 1
+        # Item index
+        item_id = 1
+        # Folder index
+        folder_id = 1
+        # Root folder
+        root_id = 0
+
+
         # Создание структуры папок в tree_nodes
-        self.cursor.execute("INSERT INTO tree_nodes VALUES (3, 0, 'folder', 'Quick sort', NULL);")
-        self.cursor.execute("INSERT INTO tree_nodes VALUES (7, 3, 'folder', 'Sorter methods', NULL);")
+        # Root folder of project
+        self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'folder', 'microgpt',  NULL);", (folder_id, root_id))
+        folder_id += 1
+
+#Gemeni        self.cursor.execute("INSERT INTO tree_nodes VALUES (3, 0, 'folder', 'Quick sort', NULL);")
+#        self.cursor.execute("INSERT INTO tree_nodes VALUES (7, 3, 'folder', 'Sorter methods', NULL);")
 
         # Регистрация глобальных функций с новыми ID из верифицированного diff
-        self.cursor.execute("INSERT INTO tree_nodes VALUES (11, 0, 'item', NULL, 1);")
-        self.cursor.execute("INSERT INTO tree_nodes VALUES (12, 0, 'item', NULL, 2);")
-        self.cursor.execute("INSERT INTO tree_nodes VALUES (13, 7, 'item', '', 8);")
+#        self.cursor.execute("INSERT INTO tree_nodes VALUES (11, 0, 'item', NULL, 1);")
+#        self.cursor.execute("INSERT INTO tree_nodes VALUES (12, 0, 'item', NULL, 2);")
+#        self.cursor.execute("INSERT INTO tree_nodes VALUES (13, 7, 'item', '', 8);")
 
         # 1. Запись глобальной функции rmsnorm (diagram_id = 1)
-        self._insert_diagram_sheet(1, "rmsnorm", "0 250", 1, 500, 420, 550, 750, 
-                                   "return [xi * scale for xi in x]", "x", 530, 140, 690, 0)
-        
+#        self._insert_diagram_sheet(1, "rmsnorm", "0 250", 1, 500, 420, 550, 750, 
         # 2. Запись глобальной функции rmsnorm2 (diagram_id = 2)
-        self._insert_diagram_sheet(2, "rmsnorm2", "-41 -82", 7, 170, 20, 150, 350, 
-                                   "ms = sum((yi * yi for yi in y)) / len(y)\nscale = (ms + 1e-05) ** (-0.5)\nreturn [yi * scale for yi in y]", "y", 200, 140, 360, 0)
-        
+#        self._insert_diagram_sheet(2, "rmsnorm2", "-41 -82", 7, 170, 20, 150, 350, 
         # Перенос diagram_info для rmsnorm2 согласно diff
-        self.cursor.execute("INSERT INTO diagram_info VALUES (2, 'papersize', 'a4');")
-        self.cursor.execute("INSERT INTO diagram_info VALUES (2, 'orientation', 'portrait');")
-
+#        self.cursor.execute("INSERT INTO diagram_info VALUES (2, 'papersize', 'a4');")
+#        self.cursor.execute("INSERT INTO diagram_info VALUES (2, 'orientation', 'portrait');")
         # 3. Запись конструктора __init__ (diagram_id = 7)
-        method_dia_id = 7
-        self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, ?, 100.0);", (method_dia_id, "__init__", "24 -13", "The constructor of class Sorter."))
-        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (method_dia_id,))
-        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (method_dia_id,))
-        
-        self.cursor.execute("INSERT INTO items VALUES (114, 7, 'beginend', '__init__', 0, 170, 60, 50, 20, 60, 0, NULL, '', NULL, '');")
-        self.cursor.execute("INSERT INTO items VALUES (115, 7, 'beginend', 'End', 0, 170, 390, 50, 20, 60, 0, NULL, '', NULL, '');")
-        self.cursor.execute("INSERT INTO items VALUES (116, 7, 'vertical', '', 0, 170, 80, 0, 290, 0, 0, NULL, '', NULL, '');")
-        self.cursor.execute("INSERT INTO items VALUES (117, 7, 'horizontal', '', 0, 200, 60, 80, 0, 0, 0, NULL, '', NULL, '');")
-        self.cursor.execute("INSERT INTO items VALUES (118, 7, 'action', '#method\n\nself\ncomparer', 0, 310, 60, 50, 40, 0, 0, NULL, '', NULL, '');")
-        self.cursor.execute("INSERT INTO items VALUES (119, 7, 'action', 'self.comparer = comparer', 0, 170, 170, 110, 20, 0, 0, NULL, '', NULL, '');")
-        self.cursor.execute("INSERT INTO items VALUES (120, 7, 'commentout', 'Note that the argument list starts with\n#comment\nThis makes the current procedure \nto be added as a method to the class.', 0, 610, 60, 170, 50, 60, 0, NULL, '', NULL, '');")
-        self.cursor.execute("INSERT INTO items VALUES (121, 7, 'commentin', 'In order to make the code generator create a class,\nadd something like this to the File description:\n\n=== class ===\nclass Sorter\n\nOnly one class per file is supported.', 0, 570, 260, 228, 70, 60, 0, NULL, '', NULL, '');")
-
+#        method_dia_id = 7
+#        self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, ?, 100.0);", (method_dia_id, "__init__", "24 -13", "The constructor of class Sorter."))
+#        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (method_dia_id,))
+#        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (method_dia_id,))
+#        self.cursor.execute("INSERT INTO items VALUES (114, 7, 'beginend', '__init__', 0, 170, 60, 50, 20, 60, 0, NULL, '', NULL, '');")
+#        self.cursor.execute("INSERT INTO items VALUES (115, 7, 'beginend', 'End', 0, 170, 390, 50, 20, 60, 0, NULL, '', NULL, '');")
+#        self.cursor.execute("INSERT INTO items VALUES (116, 7, 'vertical', '', 0, 170, 80, 0, 290, 0, 0, NULL, '', NULL, '');")
+#        self.cursor.execute("INSERT INTO items VALUES (117, 7, 'horizontal', '', 0, 200, 60, 80, 0, 0, 0, NULL, '', NULL, '');")
+#        self.cursor.execute("INSERT INTO items VALUES (118, 7, 'action', '#method\n\nself\ncomparer', 0, 310, 60, 50, 40, 0, 0, NULL, '', NULL, '');")
+#        self.cursor.execute("INSERT INTO items VALUES (119, 7, 'action', 'self.comparer = comparer', 0, 170, 170, 110, 20, 0, 0, NULL, '', NULL, '');")
+#        self.cursor.execute("INSERT INTO items VALUES (120, 7, 'commentout', 'Note that the argument list starts with\n#comment\nThis makes the current procedure \nto be added as a method to the class.', 0, 610, 60, 170, 50, 60, 0, NULL, '', NULL, '');")
+#        self.cursor.execute("INSERT INTO items VALUES (121, 7, 'commentin', 'In order to make the code generator create a class,\nadd something like this to the File description:\n\n=== class ===\nclass Sorter\n\nOnly one class per file is supported.', 0, 570, 260, 228, 70, 60, 0, NULL, '', NULL, '');")
         # 4. Запись многошампурного Силуэта quick_sort (diagram_id = 8) согласно верифицированному diff
-        sil_dia_id = 8
-        sil_desc = "The classic quick sort algorithm.\n\nImplemented as a method in a class.\nThe comparison function is stored\nin the field ''comparer''."
-        self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, ?, 100.0);", (sil_dia_id, "quick_sort", "-40 14", sil_desc))
-        
+#        sil_dia_id = 8
+#        sil_desc = "The classic quick sort algorithm.\n\nImplemented as a method in a class.\nThe comparison function is stored\nin the field ''comparer''."
+#        self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, ?, 100.0);", (sil_dia_id, "quick_sort", "-40 14", sil_desc))
         # Набор верифицированных записей items для Силуэта
-        silhouette_items = [
-            (122, 8, 'beginend', 'quick_sort', 0, 110, 60, 50, 20, 0, 0, None, '', None, ''),
-            (123, 8, 'beginend', 'End', 0, 2220, 510, 50, 20, 0, 0, None, '', None, ''),
-            (124, 8, 'vertical', '', 0, 110, 80, 0, 710, 0, 0, None, '', None, ''),
-            (125, 8, 'vertical', '', 0, 780, 120, 0, 670, 0, 0, None, '', None, ''),
-            (126, 8, 'vertical', '', 0, 2220, 120, 0, 380, 0, 0, None, '', None, ''),
-            (127, 8, 'horizontal', '', 0, 110, 120, 2110, 0, 0, 0, None, '', None, ''),
-            (128, 8, 'arrow', '', 0, -20, 120, 130, 670, 1930, 1, None, '', None, ''),
-            (129, 8, 'branch', 'analyze input', 0, 110, 170, 110, 30, 0, 0, None, '', None, ''),
-            (130, 8, 'address', 'exit', 0, 110, 750, 110, 30, 0, 0, None, '', None, ''),
-            (131, 8, 'branch', 'simple case', 0, 780, 170, 150, 30, 0, 0, None, '', None, ''),
-            (132, 8, 'branch', 'partition', 0, 1450, 170, 160, 30, 0, 0, None, '', None, ''),
-            (133, 8, 'address', 'exit', 0, 780, 750, 150, 30, 0, 0, None, '', None, ''),
-            (134, 8, 'horizontal', '', 0, 150, 60, 120, 0, 0, 0, None, '', None, ''),
-            (135, 8, 'action', '#method\n\nself\ncollection', 0, 310, 60, 50, 50, 0, 0, None, '', None, ''),
-            (136, 8, 'action', 'length = len(collection)', 0, 110, 270, 110, 20, 0, 0, None, '', None, ''),
-            (137, 8, 'select', 'length', 0, 110, 380, 110, 20, 0, 0, None, '', None, ''),
-            (138, 8, 'case', '0', 0, 110, 460, 110, 20, 0, 0, None, '', None, ''),
-            (139, 8, 'case', '1', 0, 280, 460, 50, 20, 60, 0, None, '', None, ''),
-            (140, 8, 'case', '2', 0, 400, 460, 60, 20, 0, 0, None, '', None, ''),
-            (141, 8, 'branch', 'exit', 0, 2220, 170, 70, 30, 0, 0, None, '', None, ''),
-            (142, 8, 'horizontal', '', 0, 110, 420, 410, 0, 0, 0, None, '', None, ''),
-            (143, 8, 'case', '', 0, 520, 460, 50, 20, 60, 0, None, '', None, ''),
-            (144, 8, 'vertical', '', 0, 280, 420, 0, 80, 0, 0, None, '', None, ''),
-            (145, 8, 'vertical', '', 0, 520, 420, 0, 370, 0, 0, None, '', None, ''),
-            (146, 8, 'vertical', '', 0, 400, 420, 0, 370, 0, 0, None, '', None, ''),
-            (147, 8, 'horizontal', '', 0, 110, 500, 170, 0, 0, 0, None, '', None, ''),
-            (148, 8, 'action', 'result = collection', 0, 110, 610, 110, 20, 0, 0, None, '', None, ''),
-            (149, 8, 'address', 'simple case', 0, 400, 750, 60, 30, 0, 0, None, '', None, ''),
-            (150, 8, 'vertical', '', 0, 1450, 120, 0, 670, 0, 0, None, '', None, ''),
-            (151, 8, 'address', 'recurse', 0, 1450, 750, 160, 30, 0, 0, None, '', None, ''),
-            (152, 8, 'address', 'partition', 0, 520, 750, 50, 30, 60, 0, None, '', None, ''),
-            (153, 8, 'action', 'first = collection[0]\nsecond = collection[1]', 0, 780, 290, 150, 30, 0, 0, None, '', None, ''),
-            (154, 8, 'if', 'self.comparer(first, second) < 0', 0, 780, 360, 150, 20, 140, 1, None, '', None, ''),
-            (155, 8, 'action', 'result = [ second, first ]', 0, 1070, 610, 120, 20, 0, 0, None, '', None, ''),
-            (156, 8, 'vertical', '', 0, 1070, 360, 0, 300, 0, 0, None, '', None, ''),
-            (157, 8, 'horizontal', '', 0, 780, 660, 290, 0, 0, 0, None, '', None, ''),
-            (158, 8, 'action', 'half = int(length / 2)\nmedian = collection[half]\nleft = []\nright = []', 0, 1450, 270, 160, 50, 0, 0, None, '', None, ''),
-            (159, 8, 'loopstart', 'i = 0; i < length; i += 1', 0, 1450, 360, 160, 20, 0, 0, None, '', None, ''),
-            (160, 8, 'loopend', '', 0, 1450, 690, 160, 20, 0, 0, None, '', None, ''),
-            (161, 8, 'action', 'current = collection[i]', 0, 1450, 480, 160, 20, 0, 0, None, '', None, ''),
-            (162, 8, 'if', 'self.comparer(current, median) < 0', 0, 1450, 540, 160, 20, 120, 1, None, '', None, ''),
-            (163, 8, 'action', 'left.append(current)', 0, 1450, 610, 160, 20, 0, 0, None, '', None, ''),
-            (164, 8, 'action', 'right.append(current)', 0, 1730, 610, 100, 20, 0, 0, None, '', None, ''),
-            (165, 8, 'horizontal', '', 0, 1450, 650, 390, 0, 0, 0, None, '', None, ''),
-            (166, 8, 'vertical', '', 0, 1730, 540, 0, 110, 0, 0, None, '', None, ''),
-            (167, 8, 'branch', 'recurse', 0, 1910, 170, 160, 30, 0, 0, None, '', None, ''),
-            (168, 8, 'address', 'exit', 0, 1910, 750, 160, 30, 0, 0, None, '', None, ''),
-            (169, 8, 'vertical', '', 0, 1910, 120, 0, 670, 0, 0, None, '', None, ''),
-            (170, 8, 'action', 'left_sorted = self.quick_sort(left)\nright_sorted = self.quick_sort(right)', 0, 1910, 250, 160, 30, 0, 0, None, '', None, ''),
-            (171, 8, 'action', 'result = []\nresult.extend(left_sorted)\nresult.append(median)\nresult.extend(right_sorted)', 0, 1910, 340, 160, 50, 0, 0, None, '', None, ''),
-            (172, 8, 'if', 'i == half', 0, 1450, 410, 160, 20, 230, 0, None, '', None, ''),
-            (173, 8, 'vertical', '', 0, 1840, 410, 0, 240, 0, 0, None, '', None, ''),
-            (174, 8, 'action', 'result = collection', 0, 780, 610, 150, 20, 0, 0, None, '', None, ''),
-            (175, 8, 'action', 'return result', 0, 2220, 420, 70, 20, 0, 0, None, '', None, '')
-        ]
-        
-        for it in silhouette_items:
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", it)
+#        silhouette_items = [
+#            (122, 8, 'beginend', 'quick_sort', 0, 110, 60, 50, 20, 0, 0, None, '', None, ''),
+#            (123, 8, 'beginend', 'End', 0, 2220, 510, 50, 20, 0, 0, None, '', None, ''),
+#            (124, 8, 'vertical', '', 0, 110, 80, 0, 710, 0, 0, None, '', None, ''),
+#            (125, 8, 'vertical', '', 0, 780, 120, 0, 670, 0, 0, None, '', None, ''),
+#            (126, 8, 'vertical', '', 0, 2220, 120, 0, 380, 0, 0, None, '', None, ''),
+#            (127, 8, 'horizontal', '', 0, 110, 120, 2110, 0, 0, 0, None, '', None, ''),
+#            (128, 8, 'arrow', '', 0, -20, 120, 130, 670, 1930, 1, None, '', None, ''),
+#            (129, 8, 'branch', 'analyze input', 0, 110, 170, 110, 30, 0, 0, None, '', None, ''),
+#            (130, 8, 'address', 'exit', 0, 110, 750, 110, 30, 0, 0, None, '', None, ''),
+#            (131, 8, 'branch', 'simple case', 0, 780, 170, 150, 30, 0, 0, None, '', None, ''),
+#            (132, 8, 'branch', 'partition', 0, 1450, 170, 160, 30, 0, 0, None, '', None, ''),
+#            (133, 8, 'address', 'exit', 0, 780, 750, 150, 30, 0, 0, None, '', None, ''),
+#            (134, 8, 'horizontal', '', 0, 150, 60, 120, 0, 0, 0, None, '', None, ''),
+#            (135, 8, 'action', '#method\n\nself\ncollection', 0, 310, 60, 50, 50, 0, 0, None, '', None, ''),
+#            (136, 8, 'action', 'length = len(collection)', 0, 110, 270, 110, 20, 0, 0, None, '', None, ''),
+#            (137, 8, 'select', 'length', 0, 110, 380, 110, 20, 0, 0, None, '', None, ''),
+#            (138, 8, 'case', '0', 0, 110, 460, 110, 20, 0, 0, None, '', None, ''),
+#            (139, 8, 'case', '1', 0, 280, 460, 50, 20, 60, 0, None, '', None, ''),
+#            (140, 8, 'case', '2', 0, 400, 460, 60, 20, 0, 0, None, '', None, ''),
+#            (141, 8, 'branch', 'exit', 0, 2220, 170, 70, 30, 0, 0, None, '', None, ''),
+#            (142, 8, 'horizontal', '', 0, 110, 420, 410, 0, 0, 0, None, '', None, ''),
+#            (143, 8, 'case', '', 0, 520, 460, 50, 20, 60, 0, None, '', None, ''),
+#            (144, 8, 'vertical', '', 0, 280, 420, 0, 80, 0, 0, None, '', None, ''),
+#            (145, 8, 'vertical', '', 0, 520, 420, 0, 370, 0, 0, None, '', None, ''),
+#            (146, 8, 'vertical', '', 0, 400, 420, 0, 370, 0, 0, None, '', None, ''),
+#            (147, 8, 'horizontal', '', 0, 110, 500, 170, 0, 0, 0, None, '', None, ''),
+#            (148, 8, 'action', 'result = collection', 0, 110, 610, 110, 20, 0, 0, None, '', None, ''),
+#            (149, 8, 'address', 'simple case', 0, 400, 750, 60, 30, 0, 0, None, '', None, ''),
+#            (150, 8, 'vertical', '', 0, 1450, 120, 0, 670, 0, 0, None, '', None, ''),
+#            (151, 8, 'address', 'recurse', 0, 1450, 750, 160, 30, 0, 0, None, '', None, ''),
+#            (152, 8, 'address', 'partition', 0, 520, 750, 50, 30, 60, 0, None, '', None, ''),
+#            (153, 8, 'action', 'first = collection[0]\nsecond = collection[1]', 0, 780, 290, 150, 30, 0, 0, None, '', None, ''),
+#            (154, 8, 'if', 'self.comparer(first, second) < 0', 0, 780, 360, 150, 20, 140, 1, None, '', None, ''),
+#            (155, 8, 'action', 'result = [ second, first ]', 0, 1070, 610, 120, 20, 0, 0, None, '', None, ''),
+#            (156, 8, 'vertical', '', 0, 1070, 360, 0, 300, 0, 0, None, '', None, ''),
+#            (157, 8, 'horizontal', '', 0, 780, 660, 290, 0, 0, 0, None, '', None, ''),
+#            (158, 8, 'action', 'half = int(length / 2)\nmedian = collection[half]\nleft = []\nright = []', 0, 1450, 270, 160, 50, 0, 0, None, '', None, ''),
+#            (159, 8, 'loopstart', 'i = 0; i < length; i += 1', 0, 1450, 360, 160, 20, 0, 0, None, '', None, ''),
+#            (160, 8, 'loopend', '', 0, 1450, 690, 160, 20, 0, 0, None, '', None, ''),
+#            (161, 8, 'action', 'current = collection[i]', 0, 1450, 480, 160, 20, 0, 0, None, '', None, ''),
+#            (162, 8, 'if', 'self.comparer(current, median) < 0', 0, 1450, 540, 160, 20, 120, 1, None, '', None, ''),
+#            (163, 8, 'action', 'left.append(current)', 0, 1450, 610, 160, 20, 0, 0, None, '', None, ''),
+#            (164, 8, 'action', 'right.append(current)', 0, 1730, 610, 100, 20, 0, 0, None, '', None, ''),
+#            (165, 8, 'horizontal', '', 0, 1450, 650, 390, 0, 0, 0, None, '', None, ''),
+#            (166, 8, 'vertical', '', 0, 1730, 540, 0, 110, 0, 0, None, '', None, ''),
+#            (167, 8, 'branch', 'recurse', 0, 1910, 170, 160, 30, 0, 0, None, '', None, ''),
+#            (168, 8, 'address', 'exit', 0, 1910, 750, 160, 30, 0, 0, None, '', None, ''),
+#            (169, 8, 'vertical', '', 0, 1910, 120, 0, 670, 0, 0, None, '', None, ''),
+#            (170, 8, 'action', 'left_sorted = self.quick_sort(left)\nright_sorted = self.quick_sort(right)', 0, 1910, 250, 160, 30, 0, 0, None, '', None, ''),
+#            (171, 8, 'action', 'result = []\nresult.extend(left_sorted)\nresult.append(median)\nresult.extend(right_sorted)', 0, 1910, 340, 160, 50, 0, 0, None, '', None, ''),
+#            (172, 8, 'if', 'i == half', 0, 1450, 410, 160, 20, 230, 0, None, '', None, ''),
+#            (173, 8, 'vertical', '', 0, 1840, 410, 0, 240, 0, 0, None, '', None, ''),
+#            (174, 8, 'action', 'result = collection', 0, 780, 610, 150, 20, 0, 0, None, '', None, ''),
+#            (175, 8, 'action', 'return result', 0, 2220, 420, 70, 20, 0, 0, None, '', None, '')
+#        ]
+#        for it in silhouette_items:
+#            self.cursor.execute("INSERT INTO items VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", it)
+
+
+# ########################################################### Add parser from v8 ################
+
+
+        # 1. Сборка глобальных функций (Листы 1 и 2)
+        for idx, node in enumerate(global_functions):
+            func_name = node.name
+            print(f"func_name: {func_name}")
+            print(f"diagram_tree_id: {diagram_tree_id}")
+            print(f"diagram_id: {diagram_id}")
+            print(f"item_id: {item_id}")
+            print(f"folder_id: {folder_id}")
+
+            # Извлекаем имена аргументов функции через AST
+            # Для def rmsnorm(x) это даст список ['x']
+            arg_names = [arg.arg for arg in node.args.args]
+            params_text = ", ".join(arg_names) if arg_names else ""
+
+            # Извлечение тела функции
+#            body_lines = [ast.unparse(stmt).strip() for stmt in node.body]
+#            function_body_text = "\n".join(body_lines)
+            body_text = "\n".join([ast.unparse(stmt).strip() for stmt in node.body])
+
+            # Регистрация листа в системном дереве
+            self.cursor.execute("INSERT INTO tree_nodes (node_id, parent, type, name, diagram_id) VALUES (?, 1, 'item', ?, ?);", (diagram_tree_id, func_name, diagram_id))
+
+            # Дифференцированная геометрия и метаданные листов (Лист 1 vs Лист 2+)
+            if idx == 0:
+                # Лист 1: Каноническая сетка
+                origin_coords, selected_flag = "0 250", 1
+                # Центральная ось шампура
+                center_x, y_begin, y_action, y_end = 500, 420, 550, 750
+                # Координаты выносного крыла параметров
+                bridge_x, bridge_w, param_x = 530, 140, 690
+            else:
+                # Лист 2: Смещенная сетка
+                origin_coords , selected_flag = "-41 -82", 0
+                # Центральная ось шампура
+                center_x, y_begin, y_action, y_end = 170, 20, 150, 350
+                # Координаты выносного крыла параметров
+                bridge_x, bridge_w, param_x = 200, 140, 360
+
+            self._insert_diagram_sheet(diagram_id, func_name, origin_coords, item_id, center_x, y_begin, y_action, y_end, body_text, params_text, bridge_x, bridge_w, param_x, selected_flag, is_method=False)
+
+            item_id += 6
+            diagram_id += 1
+            diagram_tree_id += 1
+
+        # 2. Сборка методов класса (Лист 7)
+        parent_folder = 1
+        if class_node:
+            # Root folder of project
+            self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'folder', ?,  NULL);", (folder_id, root_id+1, class_node.name,))
+            folder_id += 1
+            for item in class_node.body:
+                if isinstance(item, ast.FunctionDef):
+                    # Ignat: Gemeni it is error, dump it just example
+                    # Принудительно выставляем diagram_id = 7 по дампу для __init__
+                    method_dia_id = diagram_id
+
+
+                    print(f"item_name: {item.name}")
+                    print(f"diagram_tree_id: {diagram_tree_id}")
+                    print(f"diagram_id: {diagram_id}")
+                    print(f"item_id: {item_id}")
+
+
+
+                    # Привязка листа к папке 'Sorter methods' (parent=7)
+                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (diagram_tree_id, folder_id - 1, method_dia_id))
+
+                    arg_names = [arg.arg for arg in item.args.args]
+                    body_text = "\n".join([ast.unparse(stmt).strip() for stmt in item.body])
+                    
+                    # Формирование параметров с тегом #method
+                    method_params = "#method\n" + "\n".join(arg_names)
+
+                    # Координатная сетка листа метода по спецификации Бурана
+                    origin_coords, selected_flag = "24 -13", 0
+                    center_x, y_begin, y_action, y_end = 170, 60, 170, 390
+                    bridge_x, bridge_w, param_x = 200, 80, 310
+
+
+
+            # Запись метаданных холста диаграммы
+                    # Сборка листа метода
+                    self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, ?, 100.0);", (method_dia_id, item.name, origin_coords, "The constructor of class Sorter." if item.name == "__init__" else ""))
+
+
 
         # Выгрузка метаданных для страниц в diagram_info
-        self.cursor.execute("INSERT INTO diagram_info VALUES (8, 'papersize', 'a4');")
-        self.cursor.execute("INSERT INTO diagram_info VALUES (8, 'orientation', 'portrait');")
+# Gemeni        self.cursor.execute("INSERT INTO diagram_info VALUES (8, 'papersize', 'a4');")
+#        self.cursor.execute("INSERT INTO diagram_info VALUES (8, 'orientation', 'portrait');")
+                    self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (method_dia_id,))
+                    self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (method_dia_id,))
 
+
+                    # Икона Начало и Конец
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_id, method_dia_id, item.name, selected_flag, center_x, y_begin))
+                    item_id += 1
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', 'End', ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_id, method_dia_id, selected_flag, center_x, y_end))
+                    item_id += 1
+
+                    # Вертикальный шампур (длина h=340 неизменна, связывает y_begin и y_end)
+                    # Шампур времени (h=290)
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'vertical', '', ?, ?, 80, 0, 290, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, selected_flag, center_x))
+                    item_id += 1
+
+
+
+            # Если у функции обнаружены аргументы, строим выносное правое крыло параметров
+            # Выносное крыло формальных параметров
+                    # Выносное крыло параметров с тегом #method
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', ?, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, selected_flag, bridge_x, y_begin, bridge_w))
+                    item_id += 1
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 50, 40, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, method_params, selected_flag, param_x, y_begin))
+                    item_id += 1
+
+
+                    # Икона Процесс (Код тела функции)
+                    # Тело метода (Икона Процесс)
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 110, 20, 0, 0, NULL, '', NULL, '');", (item_id, method_dia_id, body_text, selected_flag, center_x, y_action))
+                    item_id += 1
+
+                    # Добавление технологических комментариев когнитивной эргономики
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'commentout', ?, 0, 610, 60, 170, 50, 60, 0, NULL, '', NULL, '');", (item_id, method_dia_id, "Note that the argument list starts with\n#comment\nThis makes the current procedure \nto be added as a method to the class."))
+                    item_id += 1
+                    self.cursor.execute("INSERT INTO items VALUES (?, ?, 'commentin', ?, 0, 570, 260, 228, 70, 60, 0, NULL, '', NULL, '');", (item_id, method_dia_id, "In order to make the code generator create a class,\nadd something like this to the File description:\n\n=== class ===\nclass Sorter\n\nOnly one class per file is supported."))
+                    item_id += 1
+                    
+#                    diagram_id = method_dia_id
+                    diagram_id += 1
+                    diagram_tree_id += 1
+
+
+
+
+
+# ######################################################### End of Add parser from v8
+
+
+
+
+
+
+
+
+
+
+        # Фиксируем глобальный фокус на последней созданной диаграмме (Лист 2, current_dia = total_functions)
+        # Фиксация фокуса на конструкторе (Лист 7)
         # Фиксация фокуса на Силуэте (Лист 8)
-        self.cursor.execute("INSERT INTO state VALUES (1, 8, ?);", (state_description,))
+#        self.cursor.execute("INSERT INTO state VALUES (1, 8, ?);", (state_description,))
+        active_dia = total_functions if total_functions > 0 else 1
+        self.cursor.execute("INSERT INTO state VALUES (1, ?, ?);", (active_dia, state_description,))
         self.conn.commit()
-        
+
+
+
         # Выполнение КВАНТОВОГО ЭКСПОРТА в индивидуальные Tcl/Tk файлы
-        self._export_to_native_tcl_files()
+#Gemeni        self._export_to_native_tcl_files()
         self.conn.close()
+        print(f"[Выполнение] Скрипт py2drn6.py детерминированно собрал схему с выносными параметрами '{params_text}'.")
+        print(f"[Успех] Скрипт py2drn7.py развернул {total_functions} функций по независимым листам Римановой поверхности.")
+        print("[Успех] Системные метаданные упакованы. Сконструирована объектная модель «Буран» в py2drn8.py.")
         print("[Успех] Реляционное ядро и текстовые файлы Силуэта 'quick_sort' детерминированно сохранены.")
 
-    def _insert_diagram_sheet(self, dia_id, name, origin, item_start, cx, y_b, y_a, y_e, body, params, bx, bw, px, sel):
+
+
+
+
+    def _insert_diagram_sheet(self, dia_id, name, origin, item_start, cx, y_b, y_a, y_e, body, params, bx, bw, px, sel, is_method):
+        """Инжектор стандартного листа диаграммы"""
         self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, NULL, 120.0);", (dia_id, name, origin))
+        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
+        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
+
         self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_start, dia_id, name, sel, cx, y_b))
         self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_start + 1, dia_id, sel, cx, y_e))
         self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 170, 40, 0, 0, NULL, '', NULL, '');", (item_start + 2, dia_id, body, sel, cx, y_a))
         self.cursor.execute("INSERT INTO items VALUES (?, ?, 'vertical', '', ?, ?, ?, 0, 340, 0, 0, NULL, NULL, NULL, NULL);", (item_start + 3, dia_id, sel, cx, y_b))
+        
         if params:
             self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', ?, ?, ?, ?, 0, 0, 0, NULL, NULL, NULL, NULL);", (item_start + 4, dia_id, sel, bx, y_b, bw))
             self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 50, 20, 0, 0, NULL, NULL, NULL, NULL);", (item_start + 5, dia_id, params, sel, px, y_b))
 
-    def _export_to_native_tcl_files(self):
-        """Когнитивный параллельный экспорт каждой диаграммы в нативный Tcl/Tk формат DRAKON Editor 1.33"""
-        self.cursor.execute("SELECT diagram_id, name, origin, description, zoom FROM diagrams;")
-        diagrams = self.cursor.fetchall()
-        
-        for dia_id, name, origin, desc, zoom in diagrams:
-            if not desc: desc = ""
-            if not zoom: zoom = 100.0
-            
+
+
+#Gemeni    def _insert_diagram_sheet(self, dia_id, name, origin, item_start, cx, y_b, y_a, y_e, body, params, bx, bw, px, sel):
+#        self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, ?, NULL, 120.0);", (dia_id, name, origin))
+#        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_start, dia_id, name, sel, cx, y_b))
+#        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', 'Конец', ?, ?, ?, 50, 20, 60, 0, NULL, '', NULL, '');", (item_start + 1, dia_id, sel, cx, y_e))
+#        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 170, 40, 0, 0, NULL, '', NULL, '');", (item_start + 2, dia_id, body, sel, cx, y_a))
+#        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'vertical', '', ?, ?, ?, 0, 340, 0, 0, NULL, NULL, NULL, NULL);", (item_start + 3, dia_id, sel, cx, y_b))
+#        if params:
+#            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', ?, ?, ?, ?, 0, 0, 0, NULL, NULL, NULL, NULL);", (item_start + 4, dia_id, sel, bx, y_b, bw))
+#            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, ?, ?, ?, 50, 20, 0, 0, NULL, NULL, NULL, NULL);", (item_start + 5, dia_id, params, sel, px, y_b))
+
+#    def _export_to_native_tcl_files(self):
+#        """Когнитивный параллельный экспорт каждой диаграммы в нативный Tcl/Tk формат DRAKON Editor 1.33"""
+#        self.cursor.execute("SELECT diagram_id, name, origin, description, zoom FROM diagrams;")
+#        diagrams = self.cursor.fetchall()
+#        for dia_id, name, origin, desc, zoom in diagrams:
+#            if not desc: desc = ""
+#            if not zoom: zoom = 100.0
             # Извлечение всех элементов данной диаграммы
-            self.cursor.execute("SELECT item_id, type, text, selected, x, y, w, h, a, b FROM items WHERE diagram_id = ?;", (dia_id,))
-            items = self.cursor.fetchall()
-            
-            item_tokens = []
-            for item_id, itype, text, selected, x, y, w, h, a, b in items:
-                if not text: text = ""
-                # Форматирование под Tcl списки (замена переводов строк)
-                fmt_text = text.replace('\n', '\n')
-                # Формируем структуру {id type {text} {} {} selected x y w h a b 0 0}
-                item_tokens.append(f"{{{item_id} {itype} {{{fmt_text}}} {{}} {{}} {selected} {x} {y} {w} {h} {a} {b} 0 0}}")
-                
-            items_str = " ".join(item_tokens)
-            
-            # Поиск node_id и parent для этой диаграммы в дереве
-            self.cursor.execute("SELECT node_id, parent, type FROM tree_nodes WHERE diagram_id = ?;", (dia_id,))
-            node_row = self.cursor.fetchone()
-            if node_row:
-                node_id, parent, ntype = node_row
-            else:
-                node_id, parent, ntype = dia_id, 0, "item"
-                
+#            self.cursor.execute("SELECT item_id, type, text, selected, x, y, w, h, a, b FROM items WHERE diagram_id = ?;", (dia_id,))
+#            items = self.cursor.fetchall()
+#            item_tokens = []
+#            for item_id, itype, text, selected, x, y, w, h, a, b in items:
+#                if not text: text = ""
+#                # Форматирование под Tcl списки (замена переводов строк)
+#                fmt_text = text.replace('\n', '\n')
+#                # Формируем структуру {id type {text} {} {} selected x y w h a b 0 0}
+#                item_tokens.append(f"{{{item_id} {itype} {{{fmt_text}}} {{}} {{}} {selected} {x} {y} {w} {h} {a} {b} 0 0}}")
+#            items_str = " ".join(item_tokens)
+#            # Поиск node_id и parent для этой диаграммы в дереве
+#            self.cursor.execute("SELECT node_id, parent, type FROM tree_nodes WHERE diagram_id = ?;", (dia_id,))
+#            node_row = self.cursor.fetchone()
+#            if node_row:
+#                node_id, parent, ntype = node_row
+#            else:
+#                node_id, parent, ntype = dia_id, 0, "item"
             # Сборка финального Tcl-каркаса
-            tcl_output = f"DRAKON 1.33 nodes {dia_id} {name} {origin} {desc} {zoom} {items_str} {node_id} {parent} {ntype} {dia_id}"
-            
-            filename = f"diagram_{name}.txt"
-            with open(filename, "w", encoding="utf-8") as file_out:
-                file_out.write(tcl_output)
+#            tcl_output = f"DRAKON 1.33 nodes {dia_id} {name} {origin} {desc} {zoom} {items_str} {node_id} {parent} {ntype} {dia_id}"
+#            filename = f"diagram_{name}.txt"
+#            with open(filename, "w", encoding="utf-8") as file_out:
+#                file_out.write(tcl_output)
+
+
 
 if __name__ == "__main__":
     converter = DrakonBuranSilhouetteConverterV9("rmsnorm.drn")
