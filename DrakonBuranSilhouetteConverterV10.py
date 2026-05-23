@@ -1,10 +1,14 @@
 import ast
 import sqlite3
 import os
-import string
+#import string
 
 
 label_counter = 0
+
+
+
+
 
 
 class DrakonBuranSilhouetteConverterV10:
@@ -17,6 +21,93 @@ class DrakonBuranSilhouetteConverterV10:
         self.cursor = self.conn.cursor()
         self._build_exact_schema()
 
+        self._diagram_id = 1
+        self._item_id = 1
+
+
+    # === ID ГЕНЕРАЦИЯ ===
+    def _next_diagram_id(self):
+        val = self._diagram_id
+        self._diagram_id += 1
+        return val
+
+    def _get_next_item_id(self):
+        val = self._item_id
+        self._item_id += 1
+        return val
+
+    # === СБОР FOR ===
+    def _collect_top_level_fors(self, node):
+        result = []
+        for n in ast.walk(node):
+            if isinstance(n, ast.For):
+                is_nested = False
+                for parent in ast.walk(n):
+                    if parent is not n and isinstance(parent, ast.For):
+                        is_nested = True
+                        break
+                if not is_nested:
+                    result.append(n)
+        return result
+
+    # === ГРУППИРОВКА ПО 3 ===
+    def _split_for_groups(self, for_nodes):
+        return [for_nodes[i:i+3] for i in range(0, len(for_nodes), 3)]
+
+    # === ОСНОВНОЙ ПАРСЕР ===
+    def _process_for_blocks(self, root):
+        for_nodes = self._collect_top_level_fors(root)
+        if not for_nodes:
+            return
+
+        groups = self._split_for_groups(for_nodes)
+        silhouette_ids = []
+
+        for idx, group in enumerate(groups):
+            dia_id = self._next_diagram_id()
+            self._create_for_silhouette(dia_id, group, idx)
+            silhouette_ids.append(dia_id)
+
+        self._create_master_for_sequence(silhouette_ids)
+
+    # === СИЛУЭТ ===
+    def _create_for_silhouette(self, dia_id, for_group, idx):
+#        self.cursor.execute(
+#            "INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);",
+#            (dia_id, f"for_silhouette_{idx}")
+#        )
+
+        print("============================================================================================")
+        for i, for_node in enumerate(for_group):
+            item_id = self._get_next_item_id()
+            code = ast.unparse(for_node)
+            print(code)
+            print("=====")
+
+#            self.cursor.execute(
+#                "INSERT INTO items VALUES (?, ?, ?, ?);",
+#                (item_id, dia_id, f"FOR_{idx}_{i}", code)
+#            )
+
+    # === MASTER ===
+    def _create_master_for_sequence(self, silhouette_ids):
+        if not silhouette_ids:
+            return
+
+        dia_id = self._next_diagram_id()
+#        self.cursor.execute(
+#            "INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);",
+#            (dia_id, "for_master_sequence")
+#        )
+
+        for sid in silhouette_ids:
+            item_id = self._get_next_item_id()
+#            self.cursor.execute(
+#                "INSERT INTO items VALUES (?, ?, ?, ?);",
+#                (item_id, dia_id, f"CALL_{sid}", f"CALL {sid}")
+#            )
+
+
 
 # =====================================================================================
 
@@ -27,7 +118,8 @@ class DrakonBuranSilhouetteConverterV10:
 
     # === ДОБАВЛЕН ПАРСЕР ===
     def _label_generator(self):
-        letters = string.ascii_uppercase
+#        letters = string.ascii_uppercase
+        letters = "QWERTYUIOPASDFGHJKLZXCVBN"
         for a in letters:
             for b in letters:
                 yield a + b
@@ -133,9 +225,10 @@ class DrakonBuranSilhouetteConverterV10:
 
         def next_label():
             global label_counter
-            letters = string.ascii_uppercase
+#            letters = string.ascii_uppercase
+            letters = "QWERTYUIOPASDFGHJKLZXCVBN"
 #            a = letters[label_counter // 26]
-            a = letters[label_counter % 25]
+            a = letters[label_counter % len(letters)]
 #            b = letters[label_counter % 25]
             label_counter += 1
 #            return a + b
@@ -143,6 +236,33 @@ class DrakonBuranSilhouetteConverterV10:
 
         branches = []
 
+        # == 1. Collect code before for in one Active
+        pre_block = []
+        post_block = []
+        for_nodes = []
+        seen_for = []
+
+
+        # == Split
+        for node in func_node.body:
+            # --- FOR → отдельная диаграмма ---
+            if isinstance(node, ast.For):
+#                rest_nodes.append(node)
+                send_for = True
+                for_nodes.append(node)
+            else:
+                if not seen_for:
+                    pre_block.append(node)
+                else:
+                    post_block.append(node)
+
+        # == 2. Befor For - one Active
+        if pre_block:
+            sh = next_label()
+            branches.append((sh, "\n".join(ast.unparse(n) for n in pre_block)))
+
+
+        # == 3. Work with For
         for node in func_node.body:
 
             # --- FOR → отдельная диаграмма ---
@@ -150,41 +270,62 @@ class DrakonBuranSilhouetteConverterV10:
 
                 d_name = f"D{len(diagrams)+1}"
 
-                sh1 = next_label()
-                print(sh1)
-                sh2 = next_label()
-                print(sh2)
-                sh3 = next_label()
-                print(sh3)
+                sh_main = next_label()
+                print(sh_main)
+                sh_if = next_label()
+                print(sh_if)
+                sh_end = next_label()
+                print(sh_end)
+
+                has_if = any(isinstance(n, ast.If) for n in node.body)
 
                 sub_blocks = {
-                    sh1: [],
-                    sh2: [],
-                    sh3: []
+#                    sh1: [],
+#                    sh2: [],
+#                    sh3: []
                 }
+
+                for_header = f"FOR {ast.unparse(node.target)} in {ast.unparse(node.iter)}"
+
+                if not has_if:
+                    # All for in one blok 
+                    sub_blocks[sh_main] = [for_header] + [ast.unparse(n) for n in node.body] #or ["pass"]
+                else:
+                    # Separate by IF
+                    sub_blocks[sh_main] = [for_header]
+                    sub_blocks[sh_if] = []
 
                 for n in node.body:
                     if isinstance(n, ast.If):
-                        sub_blocks[sh2].append(f"IF {ast.unparse(n.test)}")
+                        sub_blocks[sh_if].append(f"IF {ast.unparse(n.test)}")
                         for x in n.body:
-                            sub_blocks[sh2].append(ast.unparse(x))
+                            sub_blocks[sh_if].append(ast.unparse(x))
                     else:
-                        sub_blocks[sh1].append(ast.unparse(n))
+                        sub_blocks[sh_main].append(ast.unparse(n))
 
-                for k in sub_blocks:
-                    if not sub_blocks[k]:
-                        sub_blocks[k] = ["pass"]
+#                for k in sub_blocks:
+#                    if not sub_blocks[k]:
+#                        sub_blocks[k] = ["pass"]
+#                if not sub_blocks[sh1]:
+#                    sub_blocks[sh1] = ["pass"]
+#                if not sub_blocks[sh2]:
+#                    sub_blocks[sh2] = ["pass"]
 
                 diagrams.append((d_name, sub_blocks))
 
-                branches.append((f"{sh1}_{sh3}", f"CALL {d_name}"))
+                branches.append((f"{sh_main}_{sh_end}", f"{for_header}\nCALL {d_name}"))
 
             else:
-                sh1 = next_label()
-                print(sh1)
-                sh2 = next_label()
-                print(sh2)
-                branches.append((sh1, ast.unparse(node)))
+                continue
+#                sh1 = next_label()
+#                print(sh1)
+#                sh2 = next_label()
+#                print(sh2)
+#                branches.append((sh1, ast.unparse(node)))
+        # == 4. After For - one Active
+        if post_block:
+            sh = next_label()
+            branches.append((sh, "\n".join(ast.unparse(n) for n in post_block)))
 
         return branches, diagrams
 
@@ -462,6 +603,9 @@ class DrakonBuranSilhouetteConverterV10:
         # === ВСТАВКА ПАРСЕРА ===
         branches, sub_diagrams = self._parse_into_branches(func_node)
         print(branches)
+        print("====Diagrams===")
+        print(sub_diagrams)
+        self._process_for_blocks(func_node)
 
 
 
