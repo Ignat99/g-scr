@@ -21,14 +21,14 @@ class DrakonBuranSilhouetteConverterV10:
         self.cursor = self.conn.cursor()
         self._build_exact_schema()
 
-        self._diagram_id = 1
+        self._dia_id = 1
         self._item_id = 1
 
 
     # === ID ГЕНЕРАЦИЯ ===
-    def _next_diagram_id(self):
-        val = self._diagram_id
-        self._diagram_id += 1
+    def _next_dia_id(self):
+        val = self._dia_id
+        self._dia_id += 1
         return val
 
     def _get_next_item_id(self):
@@ -63,30 +63,30 @@ class DrakonBuranSilhouetteConverterV10:
         groups = self._split_for_groups(for_nodes)
         silhouette_ids = []
 
-        for idx, group in enumerate(groups):
-#            dia_id = self._next_diagram_id()
-            dia_id = 16
-            print("3 main parser ===")
-            print(dia_id)
+#        for idx, group in enumerate(groups):
+#            dia_id = self._next_dia_id()
+#            dia_id = 16
+#            print("3 main parser ===")
+#            print(dia_id)
 
-            self._create_for_silhouette(dia_id, group, idx)
-            silhouette_ids.append(dia_id)
+#            self._create_for_silhouette(dia_id, group, idx)
+#            silhouette_ids.append(dia_id)
 
-        self._create_master_for_sequence(silhouette_ids)
+#        self._create_master_for_sequence(silhouette_ids)
 
     # === СИЛУЭТ ===
-    def _create_for_silhouette(self, dia_id, for_group, idx):
+#    def _create_for_silhouette(self, dia_id, for_group, idx):
 #        self.cursor.execute(
 #            "INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);",
 #            (dia_id, f"for_silhouette_{idx}")
 #        )
 
-        print("============================================================================================")
-        for i, for_node in enumerate(for_group):
-            item_id = self._get_next_item_id()
-            code = ast.unparse(for_node)
-            print(code)
-            print("=====")
+#        print("============================================================================================")
+#        for i, for_node in enumerate(for_group):
+#            item_id = self._get_next_item_id()
+#            code = ast.unparse(for_node)
+#            print(code)
+#            print("=====")
 
 #            self.cursor.execute(
 #                "INSERT INTO items VALUES (?, ?, ?, ?);",
@@ -94,22 +94,22 @@ class DrakonBuranSilhouetteConverterV10:
 #            )
 
     # === MASTER ===
-    def _create_master_for_sequence(self, silhouette_ids):
-        if not silhouette_ids:
-            return
+#    def _create_master_for_sequence(self, silhouette_ids):
+#        if not silhouette_ids:
+#            return
 
-#        dia_id = self._next_diagram_id()
-        dia_id = 17
-        print("3 master ===")
-        print(dia_id)
+#        dia_id = self._next_dia_id()
+#        dia_id = 17
+#        print("3 master ===")
+#        print(dia_id)
 
 #        self.cursor.execute(
 #            "INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);",
 #            (dia_id, "for_master_sequence")
 #        )
 
-        for sid in silhouette_ids:
-            item_id = self._get_next_item_id()
+#        for sid in silhouette_ids:
+#            item_id = self._get_next_item_id()
 #            self.cursor.execute(
 #                "INSERT INTO items VALUES (?, ?, ?, ?);",
 #                (item_id, dia_id, f"CALL_{sid}", f"CALL {sid}")
@@ -276,14 +276,14 @@ class DrakonBuranSilhouetteConverterV10:
             # --- FOR → отдельная диаграмма ---
             if isinstance(node, ast.For):
 
-                d_name = f"D{len(diagrams)+1}"
-
+#                d_name = f"D{len(diagrams)+1}"
+                d_name = next_label()
                 sh_main = next_label()
-                print(sh_main)
+#                print(sh_main)
                 sh_if = next_label()
-                print(sh_if)
+#                print(sh_if)
                 sh_end = next_label()
-                print(sh_end)
+#                print(sh_end)
 
                 has_if = any(isinstance(n, ast.If) for n in node.body)
 
@@ -398,7 +398,7 @@ class DrakonBuranSilhouetteConverterV10:
 
         # Инициализация счетчиков ID
         node_id = 1
-        diagram_id = 1
+        dia_id = self._next_dia_id()
         item_id = 1
 
 
@@ -416,71 +416,56 @@ class DrakonBuranSilhouetteConverterV10:
             
             for item in class_node.body:
                 if isinstance(item, ast.FunctionDef):
-                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (node_id, class_folder_id, diagram_id))
+#                   self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (node_id, class_folder_id, diagram_id))
+                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (node_id, class_folder_id, dia_id))
                     node_id += 1
                     
                     arg_names = [arg.arg for arg in item.args.args]
                     body_text = "\n".join([ast.unparse(stmt).strip() for stmt in item.body])
                     method_params = "#method\n" + "\n".join(arg_names)
                     
-                    self._insert_primitive_diagram(diagram_id, item.name, body_text, method_params, item_id)
+#                   self._insert_primitive_diagram(diagram_id, item.name, body_text, method_params, item_id)
+                    self._insert_primitive_diagram(dia_id, item.name, body_text, method_params, item_id)
                     item_id += 10
-                    diagram_id += 1
+                    dia_id = self._next_dia_id()
 
-        dia_id = 18
+        dia_id = self._next_dia_id()
 
         # 3. Обработка глобальных функций
         for func_name, node in global_functions.items():
-#            self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', ?, ?);", (node_id, root_folder_id, func_name, diagram_id))
             self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', ?, ?);", (node_id, root_folder_id, func_name, dia_id))
             node_id += 1
 
             arg_names = [arg.arg for arg in node.args.args]
             params_text = ", ".join(arg_names) if arg_names else ""
 
-            dia_id += 1
-            print("3 global fun ===")
-            print(dia_id)
+            dia_id = self._next_dia_id()
 
             # Проверяем «тяжесть» функции: gpt и main превращаем в Силуэты (шампуры)
             if func_name in ['gpt', 'main']:
 #Ignat    Test version
-                print("0 ===")
-                print(item_id)
-#                dia_id += 1
-                print("3 gpt main ===")
-                print(dia_id)
-#                self._insert_silhouette_diagram1(diagram_id, func_name, node, params_text, item_id)
                 self._insert_silhouette_diagram1(dia_id, func_name, node, params_text, item_id)
                 item_id += 360 # Выделяем большой пул ID под сложную структуру
             else:
                 # Обычные функции (rmsnorm, softmax, linear) делаем простым шампуром
                 body_text = "\n".join([ast.unparse(stmt).strip() for stmt in node.body])
-                print("1 ===")
-                print(item_id)
+#                print(dia_id)
 
-                print("3 rmsnorm softmax linear ===")
-#                dia_id += 1
-                print(dia_id)
-
-#                self._insert_primitive_diagram(diagram_id, func_name, body_text, params_text, item_id)
                 self._insert_primitive_diagram(dia_id, func_name, body_text, params_text, item_id)
                 item_id += 10
 
-            diagram_id += 1
+            dia_id = self._next_dia_id()
 
 
         # Фиксируем фокус на последней диаграмме
-        self.cursor.execute("INSERT INTO state VALUES (1, ?, ?);", (diagram_id - 1, state_description))
+        self.cursor.execute("INSERT INTO state VALUES (1, ?, ?);", (dia_id - 1, state_description))
         self.conn.commit()
         self.conn.close()
         print(f"[Успех] База {self.drn_path} успешно сгенерирована. Функции 'gpt' и 'main' разложены на силуэты.")
 
     def _insert_primitive_diagram(self, dia_id, name, body, params, item_start):
-        print("2 ===")
-        print(item_start)
-        print("3 primitive diagram ===")
-        print(dia_id)
+        print("4 primitive diagram  ===")
+        print(dia_id, " ", name)
 
         """Обычный линейный шампур (Примитив) для простых функций и методов"""
         self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);", (dia_id, name))
@@ -555,10 +540,10 @@ class DrakonBuranSilhouetteConverterV10:
         # =========================================================
         for d_name, shampurs in sub_diagrams:
 
-#            dia_id = self._next_diagram_id()
-            dia_id += 1
-            print("3 subdiagram1  ===")
-            print(dia_id)
+#            dia_id += 1
+            dia_id = self._next_dia_id()
+            print("4 subdiagram1  ===")
+            print(dia_id, "  ", d_name)
 
             self.cursor.execute(
                 "INSERT INTO diagrams VALUES (?, ?, '0 0', ?, 100.0);",
@@ -595,8 +580,8 @@ class DrakonBuranSilhouetteConverterV10:
 
 
     def _insert_silhouette_diagram1(self, dia_id, name, func_node, params, item_start):
-        print("3 silhouette diagram1  ===")
-        print(dia_id)
+        print("4 silhouette diagram1  ===")
+        print(dia_id, "  ", name)
 
         """Генератор канонического многошампурного Силуэта ДРАКОН для gpt() и main()"""
         self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 0', ?, 100.0);", (dia_id, name, f"auto silhouette {name}"))
@@ -633,9 +618,9 @@ class DrakonBuranSilhouetteConverterV10:
 #        branches = self._parse_chunks(chunks)
         # === ВСТАВКА ПАРСЕРА ===
         branches, sub_diagrams = self._parse_into_branches(func_node)
-        print(branches)
-        print("====Diagrams===")
-        print(sub_diagrams)
+#        print(branches)
+#        print("====Diagrams===")
+#        print(sub_diagrams)
         self._process_for_blocks(func_node)
 
 
@@ -648,8 +633,8 @@ class DrakonBuranSilhouetteConverterV10:
 #            branches.append((b_name, code_text))
 
         num_branches = len(branches)
-        print("num_branches")
-        print(num_branches)
+#        print("num_branches")
+#        print(num_branches)
         
         # Координационная сетка Силуэта
         start_x = 150
@@ -723,52 +708,51 @@ class DrakonBuranSilhouetteConverterV10:
                                     (item_start, dia_id, cx, y_nodes_start + 200))
             item_start += 1
 
-#        dia_id = self._next_diagram_id()
-#        dia_id = 24
 
 
         # =========================================================
         #  ПОДДИАГРАММЫ
         # =========================================================
-#        for d_name, shampurs in sub_diagrams:
+        for d_name, shampurs in sub_diagrams:
 
 #            dia_id += 1
-#            print("3 subdiagram 2 ===")
-#            print(dia_id)
+            dia_id = self._next_dia_id()
+            print("4 subdiagram 2 ===")
+            print(dia_id, "   ", d_name)
 
 #            self.cursor.execute(
 #                "INSERT INTO diagrams VALUES (?, ?, '0 0', ?, 100.0);",
 #                (dia_id, d_name, "sub")
 #            )
 
-#            """Обычный линейный шампур (Примитив) для простых функций и методов"""
-#            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);", (dia_id, d_name))
-#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
-#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
+            """Обычный линейный шампур (Примитив) для простых функций и методов"""
+            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);", (dia_id, d_name))
+            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
+            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
 
 
 
-#            x = 150
-#            y = 100
+            x = 150
+            y = 100
 
-#            for sh, lines in shampurs.items():
+            for sh, lines in shampurs.items():
 
-#                self.cursor.execute(
-#                    "INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 120, 30, 0, 0, NULL, '', NULL, '');",
-#                    (item_start, dia_id, sh, x, y)
-#                )
-#                item_start += 1
+                self.cursor.execute(
+                    "INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 120, 30, 0, 0, NULL, '', NULL, '');",
+                    (item_start, dia_id, sh, x, y)
+                )
+                item_start += 1
 
-#                for line in lines:
-#                    y += 50
-#                    self.cursor.execute(
-#                        "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
-#                        (item_start, dia_id, line, x, y)
-#                    )
-#                    item_start += 1
+                for line in lines:
+                    y += 50
+                    self.cursor.execute(
+                        "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
+                        (item_start, dia_id, line, x, y)
+                    )
+                    item_start += 1
 
-#                x += 250
-#                y = 100
+                x += 250
+                y = 100
 
 
 
