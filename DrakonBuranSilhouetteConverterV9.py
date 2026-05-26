@@ -429,7 +429,7 @@ class DrakonBuranSilhouetteConverterV10:
                     item_id += 10
                     dia_id = self._next_dia_id()
 
-        dia_id = self._next_dia_id()
+#Gemeni        dia_id = self._next_dia_id()
 
         # 3. Обработка глобальных функций
         for func_name, node in global_functions.items():
@@ -444,7 +444,7 @@ class DrakonBuranSilhouetteConverterV10:
             # Проверяем «тяжесть» функции: gpt и main превращаем в Силуэты (шампуры)
             if func_name in ['gpt', 'main']:
 #Ignat    Test version
-                self._insert_silhouette_diagram1(dia_id, func_name, node, params_text, item_id)
+                dia_id = self._insert_silhouette_diagram1(dia_id, func_name, node, params_text, item_id)
                 item_id += 360 # Выделяем большой пул ID под сложную структуру
             else:
                 # Обычные функции (rmsnorm, softmax, linear) делаем простым шампуром
@@ -571,7 +571,6 @@ class DrakonBuranSilhouetteConverterV10:
 
                 x += 250
                 y = 100
-
 
 
 
@@ -754,6 +753,7 @@ class DrakonBuranSilhouetteConverterV10:
                 x += 250
                 y = 100
 
+            return dia_id
 
 
 
