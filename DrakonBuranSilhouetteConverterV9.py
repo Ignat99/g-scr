@@ -6,11 +6,6 @@ import os
 
 label_counter = 0
 
-
-
-
-
-
 class DrakonBuranSilhouetteConverterV10:
     def __init__(self, drn_path="rmsnorm.drn"):
         self.drn_path = drn_path
@@ -416,15 +411,13 @@ class DrakonBuranSilhouetteConverterV10:
             
             for item in class_node.body:
                 if isinstance(item, ast.FunctionDef):
-#                   self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (node_id, class_folder_id, diagram_id))
-                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', '', ?);", (node_id, class_folder_id, dia_id))
+                    self.cursor.execute("INSERT INTO tree_nodes VALUES (?, ?, 'item', ?, ?);", (node_id, class_folder_id, item.name, dia_id))
+                    print("item name")
+                    print(item.name)
                     node_id += 1
-                    
                     arg_names = [arg.arg for arg in item.args.args]
                     body_text = "\n".join([ast.unparse(stmt).strip() for stmt in item.body])
                     method_params = "#method\n" + "\n".join(arg_names)
-                    
-#                   self._insert_primitive_diagram(diagram_id, item.name, body_text, method_params, item_id)
                     self._insert_primitive_diagram(dia_id, item.name, body_text, method_params, item_id)
                     item_id += 10
                     dia_id = self._next_dia_id()
@@ -437,13 +430,14 @@ class DrakonBuranSilhouetteConverterV10:
             node_id += 1
 
             arg_names = [arg.arg for arg in node.args.args]
-            params_text = ", ".join(arg_names) if arg_names else ""
+            params_text = "\n".join(arg_names) if arg_names else ""
 
-            dia_id = self._next_dia_id()
+#Gemeni            dia_id = self._next_dia_id()
 
             # Проверяем «тяжесть» функции: gpt и main превращаем в Силуэты (шампуры)
             if func_name in ['gpt', 'main']:
 #Ignat    Test version
+                pass
                 dia_id = self._insert_silhouette_diagram1(dia_id, func_name, node, params_text, item_id)
                 item_id += 360 # Выделяем большой пул ID под сложную структуру
             else:
@@ -589,8 +583,6 @@ class DrakonBuranSilhouetteConverterV10:
         self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
         self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
 
-
-
         # 1. Разбиваем тело функции на логические куски для шампуров
         branches = []
 
@@ -621,10 +613,6 @@ class DrakonBuranSilhouetteConverterV10:
 #        print("====Diagrams===")
 #        print(sub_diagrams)
         self._process_for_blocks(func_node)
-
-
-
-
 
         # Преобразуем блоки AST в текстовый код для икон
 #        for b_name, nodes in chunks:
@@ -667,16 +655,6 @@ class DrakonBuranSilhouetteConverterV10:
             self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 80, 30, 0, 0, NULL, '', NULL, '');", (item_start + 1, dia_id, params, start_x + 160, y_header))
             item_start += 2
 
-
-
-
-
-
-
-
-
-
-
         # 2. Строим структуру шампуров
         for idx, (b_name, b_code) in enumerate(branches):
             cx = start_x + (idx * step_x)
@@ -712,52 +690,32 @@ class DrakonBuranSilhouetteConverterV10:
         # =========================================================
         #  ПОДДИАГРАММЫ
         # =========================================================
-        for d_name, shampurs in sub_diagrams:
-
-#            dia_id += 1
-            dia_id = self._next_dia_id()
-            print("4 subdiagram 2 ===")
-            print(dia_id, "   ", d_name)
-
-#            self.cursor.execute(
-#                "INSERT INTO diagrams VALUES (?, ?, '0 0', ?, 100.0);",
-#                (dia_id, d_name, "sub")
-#            )
-
-            """Обычный линейный шампур (Примитив) для простых функций и методов"""
-            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);", (dia_id, d_name))
-            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
-            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
-
-
-
-            x = 150
-            y = 100
-
-            for sh, lines in shampurs.items():
-
-                self.cursor.execute(
-                    "INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 120, 30, 0, 0, NULL, '', NULL, '');",
-                    (item_start, dia_id, sh, x, y)
-                )
-                item_start += 1
-
-                for line in lines:
-                    y += 50
-                    self.cursor.execute(
-                        "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
-                        (item_start, dia_id, line, x, y)
-                    )
-                    item_start += 1
-
-                x += 250
-                y = 100
-
-            return dia_id
-
-
-
-
+#        for d_name, shampurs in sub_diagrams:
+#            dia_id = self._next_dia_id()
+#            print("4 subdiagram 2 ===")
+#            print(dia_id, "   ", d_name)
+#            """Обычный линейный шампур (Примитив) для простых функций и методов"""
+#            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', ?, 100.0);", (dia_id, d_name, "sub"))
+#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
+#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
+#            x = 150
+#            y = 100
+#            for sh, lines in shampurs.items():
+#                self.cursor.execute(
+#                    "INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 120, 30, 0, 0, NULL, '', NULL, '');",
+#                    (item_start, dia_id, sh, x, y)
+#                )
+#                item_start += 1
+#                for line in lines:
+#                    y += 50
+#                    self.cursor.execute(
+#                        "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
+#                        (item_start, dia_id, line, x, y)
+#                    )
+#                    item_start += 1
+#                x += 250
+#                y = 100
+#            return dia_id
 
 
 if __name__ == "__main__":
