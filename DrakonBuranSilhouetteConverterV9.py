@@ -720,10 +720,9 @@ class DrakonBuranSilhouetteConverterV10:
                 v_y = 80
                 v_h = y_bottom_level - v_y # 520
 #            elif idx == num_branches - 1:
-            elif idx == num_branches:
                 # Последний шампур идет от шины (y=120) до иконы Конец (y=500)
-                v_y = y_branch_line
-                v_h = y_end_icon - 10 - v_y # 380
+#                v_y = y_branch_line
+#                v_h = y_end_icon - 10 - v_y # 380
             else:
                 # Промежуточные шампуры идут от шины (y=120) до самого низа (y=600)
                 v_y = y_branch_line
@@ -822,7 +821,10 @@ class DrakonBuranSilhouetteConverterV10:
         arrow_x = start_x - 150 # 170 - 150 = 20
         arrow_w = 150
         arrow_h = y_bottom_level - y_branch_line # 600 - 120 = 480
-        arrow_a = cx - 20 # Ширина охвата под шампурами (в эталоне 420)
+#        arrow_a = cx - 20 # Ширина охвата под шампурами (в эталоне 420)
+#        arrow_a = cx - start_x # Ширина охвата под шампурами (в эталоне 420)
+#        arrow_a = exit_x - start_x - 100 # Ширина охвата под шампурами (в эталоне 420)
+        arrow_a = start_x + (num_branches-1) * step_x - 20 # Ширина охвата под шампурами (в эталоне 420)
 
         self.cursor.execute(
             "INSERT INTO items (item_id, diagram_id, type, text, selected, x, y, w, h, a, b, aux_value, color, format, text2) "
