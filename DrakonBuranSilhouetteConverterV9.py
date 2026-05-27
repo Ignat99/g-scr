@@ -629,6 +629,7 @@ class DrakonBuranSilhouetteConverterV10:
         y_header = 60
         y_branch_line = 120
         y_nodes_start = 220
+        y_bottom_bus = start_x + step_x + 20
 
         # Главная икона Начало (всегда на 1-м шампуре)
 #        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, ?, 60, 20, 0, 0, NULL, '', NULL, '');", 
@@ -648,6 +649,26 @@ class DrakonBuranSilhouetteConverterV10:
         self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', 0, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');", 
                             (item_start, dia_id, start_x, y_branch_line, num_branches * step_x))
         item_start += 1
+
+
+
+        # Поместить в метод _insert_silhouette_diagram1, ориентировочно после цикла отрисовки веток
+        self.cursor.execute(
+            "INSERT INTO items (item_id, diagram_id, type, text, selected, x, y, w, h, a, b, aux_value, color, format, text2) "
+            "VALUES (?, ?, 'horizontal', '', 0, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');",
+            (item_start, dia_id, start_x, y_bottom_bus, num_branches * step_x)
+        )
+        item_start += 1
+
+        self.cursor.execute(
+            "INSERT INTO items (item_id, diagram_id, type, text, selected, x, y, w, h, a, b, aux_value, color, format, text2) "
+            "VALUES (?, ?, 'vertical', '', 0, ?, ?, 0, ?, 0, 0, NULL, '', NULL, '');",
+            (item_start, dia_id, exit_x, y_branch_line, y_nodes_start + 30)
+        )
+        item_start += 1
+
+
+
 
         # Вынос параметров (если есть)
         if params:
@@ -679,6 +700,19 @@ class DrakonBuranSilhouetteConverterV10:
                 next_branch_name = branches[idx + 1][0]
                 self.cursor.execute("INSERT INTO items VALUES (?, ?, 'address', ?, 0, ?, ?, 140, 30, 0, 0, NULL, '', NULL, '');", 
                                     (item_start, dia_id, next_branch_name, cx, y_nodes_start + 200))
+
+
+
+#                self.cursor.execute(
+#                    "INSERT INTO items (item_id, diagram_id, type, text, selected, x, y, w, h, a, b, aux_value, color, format, text2) "
+#                    "VALUES (?, ?, 'arrow', '', 0, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');",
+#                    (item_start, dia_id, cx, y_nodes_start + 200, step_x) # на уровне иконы Адрес
+#                )
+#                item_start += 1
+
+
+
+
             else:
                 # Последний шампур передает управление на «Конец»
                 self.cursor.execute("INSERT INTO items VALUES (?, ?, 'address', 'Конец', 0, ?, ?, 140, 30, 0, 0, NULL, '', NULL, '');", 
