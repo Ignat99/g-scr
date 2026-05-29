@@ -577,6 +577,7 @@ class DrakonBuranSilhouetteConverterV10:
             Создает изолированную поддиаграмму (Примитив) для простых функций и методов.
             Возвращает кортеж (dia_id, item_start) для сохранения сквозной нумерации объектов.
             """
+            buffer = []
             dia_id = self._next_dia_id()
         
             print("4 subdiagram 2 ===")
@@ -588,7 +589,7 @@ class DrakonBuranSilhouetteConverterV10:
             self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
         
             # Топологические координаты осей (фиксированная инвариантная сетка)
-            x = 150
+            x = 180
         
             for sh, lines in shampurs.items():
                 y = 100
@@ -598,19 +599,69 @@ class DrakonBuranSilhouetteConverterV10:
                     (item_start, dia_id, sh, x, y)
                 )
                 item_start += 1
+                y += 100
+                # Икона начала цикла
+                self.cursor.execute(
+                    "INSERT INTO items VALUES (?, ?, 'loopstart', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
+                    (item_start, dia_id, lines[0], x, y)
+
+                )
+                item_start += 1
             
                 # Последовательное линейное заполнение иконами действий
-                for line in lines:
+                for line in lines[1:]:
                     y += 100
+#                    if '\n' not in line:
+#                    if '\n' not in line or not line.strip().startswith(('if', 'for', 'while')):
+#                    if "For " not in line or "for " not in line:
+#                        print(line)
+#                        buffer.append(line)
+#                    else:
+                        # сначала сбрасываем буфер
+#                        if buffer:
+#                            text = '\n'.join(buffer)
+#                            self.cursor.execute(
+#                                "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
+#                                (item_start, dia_id, text, x, y)
+#                            )
+#                            item_start += 1
+#                            buffer = []
+#
+                    # потом обрабатываем текущую строку отдельно
                     self.cursor.execute(
                         "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
                         (item_start, dia_id, line, x, y)
                     )
                     item_start += 1
-                
+
+
                 # Сдвиг оси X для следующего шампура (инвариантный шаг сетки)
-                x += 250
+#                x += 250
             
+                # Икона конца цикла
+                y += 100
+                self.cursor.execute(
+                    "INSERT INTO items VALUES (?, ?, 'loopend', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
+                    (item_start, dia_id, lines[0], x, y)
+
+                )
+                item_start += 1
+                y += 100
+                # Икона конца ветки (заголовок шампура)
+                self.cursor.execute(
+                    "INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, ?, 120, 30, 0, 0, NULL, '', NULL, '');",
+                    (item_start, dia_id, 'End', x, y)
+                )
+                item_start += 1
+                # Шампур (вертикальная связь)
+                self.cursor.execute(
+                    "INSERT INTO items VALUES (?, ?, 'vertical', '', 0, 180, 80, 0, ?, -30, 0, NULL, '', NULL, '');",
+                    (item_start, dia_id, y-100)
+                )
+                item_start += 1
+
+
+
             return dia_id, item_start# === Цикл сборки поддиаграмм ===
 
 
