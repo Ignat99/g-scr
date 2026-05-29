@@ -842,31 +842,31 @@ class DrakonBuranSilhouetteConverterV10:
         # =========================================================
         #  ПОДДИАГРАММЫ
         # =========================================================
-        for d_name, shampurs in sub_diagrams:
-            dia_id = self._next_dia_id()
-            print("4 subdiagram 2 ===")
-            print(dia_id, "   ", d_name)
+#        for d_name, shampurs in sub_diagrams:
+#            dia_id = self._next_dia_id()
+#            print("4 subdiagram 2 ===")
+#            print(dia_id, "   ", d_name)
             """Обычный линейный шампур (Примитив) для простых функций и методов"""
-            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', ?, 100.0);", (dia_id, d_name, "sub"))
-            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
-            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
-            x = 150
-            y = 100
-            for sh, lines in shampurs.items():
-                self.cursor.execute(
-                    "INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 120, 30, 0, 0, NULL, '', NULL, '');",
-                    (item_start, dia_id, sh, x, y)
-                )
-                item_start += 1
-                for line in lines:
-                    y += 100
-                    self.cursor.execute(
-                        "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
-                        (item_start, dia_id, line, x, y)
-                    )
-                    item_start += 1
-                x += 250
-                y = 100
+#            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', ?, 100.0);", (dia_id, d_name, "sub"))
+#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
+#            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
+#            x = 150
+#            y = 100
+#            for sh, lines in shampurs.items():
+#                self.cursor.execute(
+#                    "INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 120, 30, 0, 0, NULL, '', NULL, '');",
+#                    (item_start, dia_id, sh, x, y)
+#                )
+#                item_start += 1
+#                for line in lines:
+#                    y += 100
+#                    self.cursor.execute(
+#                        "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, 180, 40, 0, 0, NULL, '', NULL, '');",
+#                        (item_start, dia_id, line, x, y)
+#                    )
+#                    item_start += 1
+#                x += 250
+#                y = 100
 #            return dia_id
 
 
