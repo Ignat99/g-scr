@@ -813,10 +813,11 @@ class DrakonBuranSilhouetteConverterV10:
                 # Первый шампур идет от иконы begin (y=80) до самого низа (y=600)
                 v_y = 80
                 v_h = y_bottom_level - v_y # 520
-#            elif idx == num_branches - 1:
+            elif idx == num_branches - 1:
                 # Последний шампур идет от шины (y=120) до иконы Конец (y=500)
-#                v_y = y_branch_line
+                v_y = y_branch_line
 #                v_h = y_end_icon - 10 - v_y # 380
+                v_h = y_bottom_level - v_y # 380
             else:
                 # Промежуточные шампуры идут от шины (y=120) до самого низа (y=600)
                 v_y = y_branch_line
@@ -829,20 +830,6 @@ class DrakonBuranSilhouetteConverterV10:
                 (item_start, dia_id, cx, v_y, v_h)
             )
             item_start += 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             # Икона «Ветка» (Заголовок шампура) теперь на фиксированном y=170
@@ -897,7 +884,7 @@ class DrakonBuranSilhouetteConverterV10:
 #                    "VALUES (?, ?, 'arrow', '', 0, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');",
 #                    (item_start, dia_id, cx, y_nodes_start + 200, step_x) # на уровне иконы Адрес
 #                )
-#                item_start += 1
+                item_start += 1
 
 
 
@@ -906,7 +893,12 @@ class DrakonBuranSilhouetteConverterV10:
                 # Последний шампур передает управление на «Конец»
                 self.cursor.execute("INSERT INTO items VALUES (?, ?, 'address', 'Конец', 0, ?, ?, 140, 30, 0, 0, NULL, '', NULL, '');", 
                                     (item_start, dia_id, cx, y_nodes_start + 200))
-            item_start += 1
+                item_start += 1
+                # Икона «Ветка» (Заголовок шампура)
+                cx1 = start_x + (num_branches * step_x)
+                self.cursor.execute("INSERT INTO items VALUES (?, ?, 'branch', ?, 0, ?, ?, 140, 30, 0, 0, NULL, '', NULL, '');", 
+                                    (item_start, dia_id, 'Конец', cx1, y_branch_line + 40))
+                item_start += 1
 
 
 

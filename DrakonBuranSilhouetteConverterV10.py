@@ -888,15 +888,6 @@ class DrakonBuranSilhouetteConverterV10:
             item_start += 2
 
 
-
-
-
-
-
-
-
-
-
         # 2. Строим структуру шампуров
         for idx, (b_name, b_code) in enumerate(branches):
             cx = start_x + (idx * step_x)
@@ -932,14 +923,3 @@ class DrakonBuranSilhouetteConverterV10:
 if __name__ == "__main__":
     converter = DrakonBuranSilhouetteConverterV10("rmsnorm.drn")
     converter.convert_source("rmsnorm.py")
-
-
-
-
-
-
-# ========================================================================================
-# =======================================================================================
-# =========================================================================================
-
-
