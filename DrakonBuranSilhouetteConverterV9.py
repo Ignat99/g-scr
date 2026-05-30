@@ -458,29 +458,82 @@ class DrakonBuranSilhouetteConverterV10:
         self.conn.close()
         print(f"[Успех] База {self.drn_path} успешно сгенерирована. Функции 'gpt' и 'main' разложены на силуэты.")
 
+
     def _insert_primitive_diagram(self, dia_id, name, body, params, item_start):
-        print("4 primitive diagram  ===")
-        print(dia_id, " ", name)
+            """Обычный линейный шампур (Примитив) для простых функций и методов"""
+            print("4 primitive diagram   ===")
+            print(dia_id, " ", name)
 
-        """Обычный линейный шампур (Примитив) для простых функций и методов"""
-        self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);", (dia_id, name))
-        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
-        self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
+            self.cursor.execute("INSERT INTO diagrams VALUES (?, ?, '0 250', NULL, 100.0);", (dia_id, name))
+            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'papersize', 'a4');", (dia_id,))
+            self.cursor.execute("INSERT INTO diagram_info VALUES (?, 'orientation', 'portrait');", (dia_id,))
 
-        # Иконы начала и конца
-        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, 170, 60, 50, 20, 60, 0, NULL, '', NULL, '');", (item_start, dia_id, name))
-        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'beginend', 'End', 0, 170, 390, 50, 20, 60, 0, NULL, '', NULL, '');", (item_start + 1, dia_id))
+            # --- Входные геометрические параметры и инварианты сетки ---
+            cx = 170       # Единая координата X (ось симметрии шампура)
+            w_half = 55
+            w_all = w_half + w_half    # Единая ширина для всех икон (beginend и action)
+            h_be = 20      # Высота икон начала и конца
+            h_act = 100    # Высота иконы действия/процесса
+            h_dop = 200     # Вертикальный технологический зазор между краями икон
+
+            # --- Расчет вертикальных координат по цепочке сверху вниз ---
+            # 1. Икона Начала
+            y_begin = 60
         
-        # Шампур (вертикальная связь)
-        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'vertical', '', 0, 170, 80, 0, 290, 0, 0, NULL, '', NULL, '');", (item_start + 2, dia_id))
+            # 2. Икона Тела функции (Действие)
+            y_action = y_begin + h_be + h_dop  # 60 + 20 + 50 = 130
         
-        # Выносное крыло параметров
-        if params:
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'horizontal', '', 0, 200, 60, 80, 0, 0, 0, NULL, '', NULL, '');", (item_start + 3, dia_id))
-            self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, 0, 310, 60, 50, 40, 0, 0, NULL, '', NULL, '');", (item_start + 4, dia_id, params))
+            # 3. Икона Конца
+            y_end = y_action + h_act + h_dop   # 130 + 100 + 50 = 280
+        
+            # 4. Вертикальный шампур (линия связи от низа Начала до верха Конца)
+            y_vert = y_begin + h_be            # Точка старта линии (80)
+            h_vert = y_end - y_vert            # Чистая длина линии (280 - 80 = 200)
 
-        # Тело функции (Икона Процесс)
-        self.cursor.execute("INSERT INTO items VALUES (?, ?, 'action', ?, 0, 170, 170, 110, 40, 0, 0, NULL, '', NULL, '');", (item_start + 5, dia_id, body))
+            # --- Запись элементов в реляционную базу ---
+        
+            # Иконы начала и конца (параметр 'a' равен 0, так как ширина теперь фиксирована)
+            self.cursor.execute(
+                "INSERT INTO items VALUES (?, ?, 'beginend', ?, 0, ?, ?, ?, ?, 0, 0, NULL, '', NULL, '');", 
+                (item_start, dia_id, name, cx, y_begin, w_all, h_be)
+            )
+            self.cursor.execute(
+                "INSERT INTO items VALUES (?, ?, 'beginend', 'End', 0, ?, ?, ?, ?, 0, 0, NULL, '', NULL, '');", 
+                (item_start + 1, dia_id, cx, y_end, w_all, h_be)
+            )
+        
+            # Шампур (вертикальная связь)
+            self.cursor.execute(
+                "INSERT INTO items VALUES (?, ?, 'vertical', '', 0, ?, ?, 0, ?, 0, 0, NULL, '', NULL, '');", 
+                (item_start + 2, dia_id, cx, y_vert, h_vert)
+            )
+        
+            # Выносное крыло параметров (если они переданы в функцию)
+            if params:
+                # Горизонтальная линия связи отходит вправо от оси шампура
+                w_dop = 110
+                x_hor_start = cx + w_dop
+                w_hor_line = 80
+            
+                # Блок параметров смещается на правый край линии
+#                x_param_box = cx + 140  # 170 + 140 = 310
+                x_param_box = x_hor_start + w_hor_line + w_dop  # 170 + 140 = 310
+            
+                self.cursor.execute(
+                    "INSERT INTO items VALUES (?, ?, 'horizontal', '', 0, ?, ?, ?, 0, 0, 0, NULL, '', NULL, '');", 
+                    (item_start + 3, dia_id, x_hor_start, y_begin, w_hor_line)
+                )
+                self.cursor.execute(
+                    "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, ?, ?, 0, 0, NULL, '', NULL, '');", 
+                    (item_start + 4, dia_id, params, x_param_box, y_begin, w_all, h_act)
+                )
+
+            # Тело функции (Икона Процесс)
+            self.cursor.execute(
+                "INSERT INTO items VALUES (?, ?, 'action', ?, 0, ?, ?, ?, ?, 0, 0, NULL, '', NULL, '');", 
+                (item_start + 5, dia_id, body, cx, y_action, w_all, h_act)
+            )
+
 
 
 
